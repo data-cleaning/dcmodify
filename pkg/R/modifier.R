@@ -21,11 +21,15 @@ setRefClass("modifier"
 #' @export
 modifier <- function(..., .file) new("modifier", ... , .file=.file)
 
-
-
+# Unfortunately we need to import this stuff directly from 'validate'
+# because cross-package inheritance don't work very well for reference
+# classes. Ref classes are needed because we want multiple dispatch.
+show_expressionset <- getFromNamespace("show_expressionset","validate")
+call2text <- getFromNamespace("call2text","validate")
+get_exprs <- getFromNamespace("get_exprs","validate")
 
 ini_modifier <- function(obj ,..., .file){
-  ini_expressionset_cli(obj, ..., .file=.file)
+  ini_expressionset_cli(obj, ..., .prefix="M")
 }
 
 
