@@ -4,5 +4,5 @@
 [![Downloads](http://cranlogs.r-pkg.org/badges/validate.modify)](http://www.r-pkg.org/pkg/validate.modify) 
 
 
-# validate.modify.modify
+# validate.modify
 Modify data records using separately defined modification rules
