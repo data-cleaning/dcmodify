@@ -9,8 +9,12 @@ before_install:
 install:
   - cp ./build/DESCRIPTION ./pkg
   - cd ./pkg
-  - ../travis-tool.sh install_deps
+  - ../travis-tool.sh install_r devtools
   - ../travis-tool.sh install_r roxygen2
+  - ../travis-tool.sh install_r knitr
+  - ../travis-tool.sh install_r testthat
+  - R -e "install.packages(c('settings','yaml'),repos='http://cran.rstudio.com')"
+  - R -e "install.packages(c('validate'),repos='http://data-cleaning.github.io/drat/')"
   - R -e "roxygen2::update_collate('.');devtools::document()"
 script: 
   - ../travis-tool.sh run_tests
