@@ -17,7 +17,7 @@ readlines_utf8 <- getFromNamespace("readlines_utf8","validate")
 parse_yrf_options <- getFromNamespace("parse_yrf_options","validate")
 options_from_yml <- getFromNamespace("options_from_yml","validate")
 
-PKGOPT <- options_manager(raise="none",lin.eq.eps = 1e-8)
+PKGOPT <- settings::options_manager(raise="none",lin.eq.eps = 1e-8)
 
 show_modifier <- function(obj){
   cat(sprintf("Object of class %s with %d elements:\n",class(obj)[1],length(obj)))
