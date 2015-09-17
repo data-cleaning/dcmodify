@@ -34,6 +34,33 @@
 NULL
 
 
+#' @include modifier.R
+NULL
+
+getFromNamespace("factory","validate")
+
+get_rule_guard <- function(r,dat){
+  g <- guard(r)
+  I <- eval(g,dat)
+  if ( is.null(I) ) rep(TRUE,nrow(dat)) else I
+}
+
+setMethod("modify",c("data.frame","modifier"), function(dat, x, ...){
+ # options <- clone_and_merge(modify_options(x),...)
+  modifiers <- x$exprs(vectorize=FALSE)
+  for ( m in modifiers ){
+    m <- set_guards(m)
+    for (n in m){
+      I <- get_rule_guard(n, dat)
+      dat[I,] <- within(dat[I,,drop=FALSE], eval(n))
+    }
+  }
+  
+  dat
+})
+
+
+
 
 
 

@@ -16,8 +16,14 @@ expr <- getFromNamespace("expr","validate")
 readlines_utf8 <- getFromNamespace("readlines_utf8","validate")
 parse_yrf_options <- getFromNamespace("parse_yrf_options","validate")
 options_from_yml <- getFromNamespace("options_from_yml","validate")
+ini_expressionset_cli <- getFromNamespace("ini_expressionset_cli","validate")
+ini_expressionset_yml <- getFromNamespace("ini_expressionset_yml","validate")
+show_expressionset <- getFromNamespace("show_expressionset","validate")
+call2text <- getFromNamespace("call2text","validate")
+get_exprs <- getFromNamespace("get_exprs","validate")
 
-PKGOPT <- settings::options_manager(raise="none",lin.eq.eps = 1e-8)
+
+PKGOPT <- settings::options_manager(raise="none",lin.eq.eps = 1e-8, sequential=TRUE, na.condition=FALSE)
 
 show_modifier <- function(obj){
   cat(sprintf("Object of class %s with %d elements:\n",class(obj)[1],length(obj)))
@@ -49,9 +55,6 @@ modifier <- function(..., .file) new("modifier", ... , .file=.file)
 # Unfortunately we need to import this stuff directly from 'validate'
 # because cross-package inheritance don't work very well for reference
 # classes. Ref classes are needed because we want multiple dispatch.
-show_expressionset <- getFromNamespace("show_expressionset","validate")
-call2text <- getFromNamespace("call2text","validate")
-get_exprs <- getFromNamespace("get_exprs","validate")
 
 
 
@@ -71,6 +74,7 @@ ini_modifier <- function(obj ,..., .file){
       ))
   }
   obj$rules <- obj$rules[i]
+  obj$._options <- PKGOPT
   obj
 }
 
@@ -110,8 +114,6 @@ setGeneric("modify", function(dat, x, ...) standardGeneric("modify"))
 setMethod("expr","modifier",function(x,...){
   lapply(x$rules, function(r) r@expr)
 })
-
-
 
 
 
