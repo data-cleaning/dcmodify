@@ -37,14 +37,19 @@ NULL
 #' @include modifier.R
 NULL
 
-getFromNamespace("factory","validate")
 
 get_rule_guard <- function(r,dat){
   g <- guard(r)
   I <- eval(g,dat)
-  if ( is.null(I) ) rep(TRUE,nrow(dat)) else I
+  if ( is.null(I) ){ 
+    rep(TRUE,nrow(dat)) 
+  } else {
+    I[is.na(I)] <- FALSE
+    I
+  }
 }
 
+#' @rdname modify
 setMethod("modify",c("data.frame","modifier"), function(dat, x, ...){
  # options <- clone_and_merge(modify_options(x),...)
   modifiers <- x$exprs(vectorize=FALSE)
@@ -59,7 +64,15 @@ setMethod("modify",c("data.frame","modifier"), function(dat, x, ...){
   dat
 })
 
-
+#' Shortcut to modify data
+#' 
+#' @param dat A \code{data.frame}
+#' @param ... A comma-separated list of modifying rules.
+#' 
+#' @export 
+modify_so <- function(dat, ...){
+  modify(dat, modifier(...))
+}
 
 
 
