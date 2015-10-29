@@ -50,6 +50,7 @@ get_rule_guard <- function(r,dat){
 }
 
 #' @rdname modify
+#' @export 
 setMethod("modify",c("data.frame","modifier"), function(dat, x, ...){
  # options <- clone_and_merge(modify_options(x),...)
   modifiers <- x$exprs(vectorize=FALSE)

@@ -108,8 +108,6 @@ setGeneric("modify", function(dat, x, ...) standardGeneric("modify"))
 
 
 
-
-
 #### S4 IMPLEMENTATIONS
 setMethod("expr","modifier",function(x,...){
   lapply(x$rules, function(r) r@expr)

@@ -1,0 +1,103 @@
+---
+title: "Introduction to validate.modify"
+author: "Mark van der Loo and Edwin de Jonge"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to validate.modify}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+### A first statement
+
+In the iris dataset, replace `Sepal.Width` with 4 value if it exceedsd 4.
+```{r}
+library(validate.modify)
+library(magrittr)
+iris %<>% modify_so( if(Sepal.Width > 4 ) Sepal.Width <- 4 )
+```
+
+### Why this package
+
+Data cleaning work flows or scripts typically contain a lot of 'if this do that'
+type of statements. Such statements are typically condensed expert knowledge.
+With this package, such 'data modifying rules' are taken out of the code and
+become in stead parameters to the work flow. This allows you to maintain, document
+and reason about data modification rules separately from the flow of your programme.
+
+This means you, the data munger can focus on the content and let R do the work.
+
+
+### Basic workflow
+
+The workflow of `validate.modify` is designed to take two concerns of your hands. The first concern is how to implement the many ideas and rules that define how and when to modify data. The second concern is related to how to apply such rules to your data. We therefore introduce two nouns and one verb that govern the basic workflow.
+
+- data: This is your data, currently this must be stored in a `data.frame`.
+- `modifier`: This is an object that stores (conditional) data modification rules.
+- `modify`: This is a function that applies the rules in a modifier to your data.
+
+Here's an example using the `retailers` data set from the [validate](https://cran.r-project.org/package=validate) package. 
+```{r}
+data("retailers", package="validate")
+head(retailers[-(1:2)],3)
+```
+
+First we define a set of modifying rules, using `modifier`.
+```{r}
+m <- modifier(
+  if (other.rev < 0) other.rev <- -1 * other.rev
+  , if ( is.na(staff.costs) ) staff.costs <- mean(staff.costs)
+)
+```
+Next, the rules can be applied to our data.
+```{r}
+ret1 <- modify(retailers,m)
+```
+
+Alternatively, if you're a fan of the [magrittr](https://cran.r-project.org/package=magrittr), package you can do this
+```{r,eval=FALSE}
+library(magrittr)
+ret2 <- retailers %>% modifier(m)
+```
+or even
+```{r,eval=FALSE}
+retailers %<>% modify_so(
+  if ( other.rev < 0) other.rev <- -1 * other.rev
+  , if ( is.na(staff.costs) ) staff.costs <- mean(staff.costs)
+)
+```
+Here, the `%<>%` operator makes sure that the original dataset gets overwritten, and `modify_so` is a shortcut function for defining modificaton rules in-line.
+
+### Handling missing values
+
+The rules you define in a `modifier` are executed on records where the conditions yields `TRUE`. In R this poses the problem on what to do when in a record the condition evaluates to `NA`. For example, the condition
+```
+other.rev < 0
+```
+in the first rule of `m` above evaluates to `NA` in the first record of the `retailers` dataset. Such cases are handled by treating it as if the condition evaluated to `FALSE`.
+
+
+
+### Importing and exporting rules from file
+
+
+### Performance, and a glimpse under the hood.
+
+You, the user can assume that the rules are evaluated record-by-record. In reality, the package is smart enough to analyse the rules a little bit and to make sure they can be evaluated in a vectorized manner.
+
+In short, when you call `modify`, or `modify_so`, the following steps are performed.
+
+1. The 
+
+
+
+
+
+
+
+### Difference with dplyr::mutate
+
+
+
+
