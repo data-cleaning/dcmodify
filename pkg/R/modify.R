@@ -29,7 +29,10 @@
 #' @import methods
 #' @import yaml
 #' @import validate
-#' 
+#' @export origin 
+#' @export description
+#' @export label
+#' @export variables
 NULL
 
 
