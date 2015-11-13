@@ -27,7 +27,6 @@
 #' @name validate.modify
 #' @aliases package-validate.modify validate.modify
 #' @import methods
-#' @import settings
 #' @import yaml
 #' @import validate
 #' 

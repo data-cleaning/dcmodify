@@ -12,7 +12,7 @@ vignette: >
 ### A first statement
 
 In the iris dataset, replace `Sepal.Width` with 4 value if it exceedsd 4.
-```{r}
+```{r,eval=FALSE}
 library(validate.modify)
 library(magrittr)
 iris %<>% modify_so( if(Sepal.Width > 4 ) Sepal.Width <- 4 )
@@ -45,6 +45,7 @@ head(retailers[-(1:2)],3)
 
 First we define a set of modifying rules, using `modifier`.
 ```{r}
+library(validate.modify)
 m <- modifier(
   if (other.rev < 0) other.rev <- -1 * other.rev
   , if ( is.na(staff.costs) ) staff.costs <- mean(staff.costs)
@@ -84,19 +85,39 @@ in the first rule of `m` above evaluates to `NA` in the first record of the `ret
 
 ### Performance, and a glimpse under the hood.
 
-You, the user can assume that the rules are evaluated record-by-record. In reality, the package is smart enough to analyse the rules a little bit and to make sure they can be evaluated in a vectorized manner.
+You, the user can assume that the rules are evaluated record-by-record. In
+reality, the package is smart enough to analyse the rules a little bit and to
+make sure they can be evaluated in a vectorized manner. This way explicit (and slow)
+R-loops are avoided as much as possible.
 
 In short, when you call `modify`, or `modify_so`, the following steps are performed.
 
-1. The 
-
-
-
-
-
+1. The rules are transformed to statements that can be executed in a vectorized manner by R.
+2. If any macros present, they are inserted into the statements
+3. For each assignment, the conditions under which they should be executed are collected.
+4. The conditions are evaluated and assignments are exectuted on a selection of the data.
 
 
 ### Difference with dplyr::mutate
+
+The functionality of this package in resembles `dplyr::mutate`, since it also 
+allows one to specify data mutations on data frames (or other tabular data 
+objects). The dplyr package is especially usefull for interactive use, for use
+in programming through the 'underscored' functions such as `mutate_`.
+
+The `validate.modify` package has been developed with a production street in 
+mind where similar data sets are processed frequently. By taking the modifying 
+rules out of the software, R programmers can build an application that allows 
+users that are less knowledgable about programming to specify their modification
+rules. Since the package allows for logging of modifications the effect of each 
+modifying rule can be monitored, and reverted if necessary.
+
+
+
+
+
+
+
 
 
 
