@@ -11,7 +11,7 @@ setRefClass("modifier"
     ) 
 )
 
-# get some methods, internal to validate
+# get some methods, internal to validate. These should be exported, quietly.
 expr <- getFromNamespace("expr","validate")
 readlines_utf8 <- getFromNamespace("readlines_utf8","validate")
 parse_yrf_options <- getFromNamespace("parse_yrf_options","validate")

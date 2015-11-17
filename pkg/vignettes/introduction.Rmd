@@ -1,10 +1,10 @@
 ---
-title: "Introduction to validate.modify"
+title: "Introduction to dcmodify"
 author: "Mark van der Loo and Edwin de Jonge"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction to validate.modify}
+  %\VignetteIndexEntry{Introduction to dcmodify}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -13,7 +13,7 @@ vignette: >
 
 In the iris dataset, replace `Sepal.Width` with 4 value if it exceedsd 4.
 ```{r,eval=FALSE}
-library(validate.modify)
+library(dcmodify)
 library(magrittr)
 iris %<>% modify_so( if(Sepal.Width > 4 ) Sepal.Width <- 4 )
 ```
@@ -31,7 +31,7 @@ This means you, the data munger can focus on the content and let R do the work.
 
 ### Basic workflow
 
-The workflow of `validate.modify` is designed to take two concerns of your hands. The first concern is how to implement the many ideas and rules that define how and when to modify data. The second concern is related to how to apply such rules to your data. We therefore introduce two nouns and one verb that govern the basic workflow.
+The workflow of `dcmodify` is designed to take two concerns of your hands. The first concern is how to implement the many ideas and rules that define how and when to modify data. The second concern is related to how to apply such rules to your data. We therefore introduce two nouns and one verb that govern the basic workflow.
 
 - data: This is your data, currently this must be stored in a `data.frame`.
 - `modifier`: This is an object that stores (conditional) data modification rules.
@@ -45,7 +45,7 @@ head(retailers[-(1:2)],3)
 
 First we define a set of modifying rules, using `modifier`.
 ```{r}
-library(validate.modify)
+library(dcmodify)
 m <- modifier(
   if (other.rev < 0) other.rev <- -1 * other.rev
   , if ( is.na(staff.costs) ) staff.costs <- mean(staff.costs)
@@ -105,7 +105,7 @@ allows one to specify data mutations on data frames (or other tabular data
 objects). The dplyr package is especially usefull for interactive use, for use
 in programming through the 'underscored' functions such as `mutate_`.
 
-The `validate.modify` package has been developed with a production street in 
+The `dcmodify` package has been developed with a production street in 
 mind where similar data sets are processed frequently. By taking the modifying 
 rules out of the software, R programmers can build an application that allows 
 users that are less knowledgable about programming to specify their modification

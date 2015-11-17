@@ -1,4 +1,4 @@
-Package: validate.modify
+Package: dcmodify
 Maintainer: Mark van der Loo <mark.vanderloo@gmail.com>
 License: GPL-3
 Title: Modify Data Using Externally Defined Modification Rules
