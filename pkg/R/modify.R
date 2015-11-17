@@ -55,7 +55,7 @@ get_rule_guard <- function(r,dat){
 #' @export 
 setMethod("modify",c("data.frame","modifier"), function(dat, x, ...){
  # options <- clone_and_merge(modify_options(x),...)
-  modifiers <- x$exprs(vectorize=FALSE)
+  modifiers <- x$exprs(vectorize=FALSE,expand_assignments=TRUE)
   for ( m in modifiers ){
     m <- set_guards(m)
     for (n in m){

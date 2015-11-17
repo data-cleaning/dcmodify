@@ -35,3 +35,9 @@ test_that("no-crash test",{
   capture.output(modifier(if(x>0)x<-1))
 })
 
+
+test_that("macros work",{
+  m <- modifier(lim := 10, if (y > lim) y <- 0)
+  dat <- data.frame(y=c(9,11))
+  expect_equal(modify(dat,m),data.frame(y=c(9,0)))
+})
