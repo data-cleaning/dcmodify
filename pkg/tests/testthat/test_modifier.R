@@ -42,6 +42,16 @@ test_that("macros work",{
   expect_equal(modify(dat,m),data.frame(y=c(9,0)))
 })
 
+#devtools::load_all('pkg')
+
+test_that("missing values are handled",{
+  m <- modifier(if(x==0) x <- 1)
+  dat <- data.frame(x=NA)
+  expect_equal(modify(dat, m), dat)
+  expect_equal(modify(dat, m, na.condition=TRUE), data.frame(x=1))
+})
+
+
 test_that("non/sequential execution is supported",{
   dat <- data.frame(x = 0,y=0)
   m <- modifier(

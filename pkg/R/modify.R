@@ -41,13 +41,13 @@ NULL
 NULL
 
 
-get_rule_guard <- function(r,dat){
+get_rule_guard <- function(r,dat, na.condition){
   g <- guard(r)
   I <- eval(g,dat)
   if ( is.null(I) ){ 
     rep(TRUE,nrow(dat)) 
   } else {
-    I[is.na(I)] <- FALSE
+    I[is.na(I)] <- na.condition
     I
   }
 }
@@ -58,12 +58,13 @@ setMethod("modify",c("data.frame","modifier"), function(dat, x, ...){
   opts <- settings::clone_and_merge(x$._options,...)
   sequential <- opts("sequential")
   odat <- if (sequential) NULL else dat
-
+  na.condition <- opts("na.condition")
+  
   modifiers <- x$exprs(vectorize=FALSE,expand_assignments=TRUE)
   for ( m in modifiers ){
     m <- set_guards(m)
     for (n in m){ # loop over nested conditionals
-      I <- if (sequential) get_rule_guard(n, dat) else get_rule_guard(n,odat)
+      I <- if (sequential) get_rule_guard(n, dat,na.condition) else get_rule_guard(n,odat,na.condition)
       if (any(I)) dat[I,] <- within(dat[I,,drop=FALSE], eval(n))
     }
   }
