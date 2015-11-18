@@ -41,3 +41,16 @@ test_that("macros work",{
   dat <- data.frame(y=c(9,11))
   expect_equal(modify(dat,m),data.frame(y=c(9,0)))
 })
+
+test_that("non/sequential execution is supported",{
+  dat <- data.frame(x = 0,y=0)
+  m <- modifier(
+    if ( x == 0) x <- 1
+    ,if ( x == 0) y <- 1
+  )
+  
+  expect_equal(modify(dat,m,sequential=TRUE), data.frame(x=1,y=0))
+  expect_equal(modify(dat,m,sequential=FALSE) , data.frame(x=1,y=1))
+})
+
+

@@ -1,3 +1,3 @@
 library(testthat)
-test_check("validate.modify")
+test_check("dcmodify")
 

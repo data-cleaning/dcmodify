@@ -29,6 +29,7 @@
 #' @import methods
 #' @import yaml
 #' @import validate
+#' @importFrom settings clone_and_merge
 #' @export origin 
 #' @export description
 #' @export label
@@ -54,13 +55,16 @@ get_rule_guard <- function(r,dat){
 #' @rdname modify
 #' @export 
 setMethod("modify",c("data.frame","modifier"), function(dat, x, ...){
- # options <- clone_and_merge(modify_options(x),...)
+  opts <- settings::clone_and_merge(x$._options,...)
+  sequential <- opts("sequential")
+  odat <- if (sequential) NULL else dat
+
   modifiers <- x$exprs(vectorize=FALSE,expand_assignments=TRUE)
   for ( m in modifiers ){
     m <- set_guards(m)
-    for (n in m){
-      I <- get_rule_guard(n, dat)
-      dat[I,] <- within(dat[I,,drop=FALSE], eval(n))
+    for (n in m){ # loop over nested conditionals
+      I <- if (sequential) get_rule_guard(n, dat) else get_rule_guard(n,odat)
+      if (any(I)) dat[I,] <- within(dat[I,,drop=FALSE], eval(n))
     }
   }
   

@@ -21,9 +21,9 @@ ini_expressionset_yml <- getFromNamespace("ini_expressionset_yml","validate")
 show_expressionset <- getFromNamespace("show_expressionset","validate")
 call2text <- getFromNamespace("call2text","validate")
 get_exprs <- getFromNamespace("get_exprs","validate")
+PKGOPT <- getFromNamespace("PKGOPT","validate")
 
-
-PKGOPT <- settings::options_manager(raise="none",lin.eq.eps = 1e-8, sequential=TRUE, na.condition=FALSE)
+#PKGOPT <- settings::options_manager(raise="none",lin.eq.eps = 1e-8, sequential=TRUE, na.condition=FALSE)
 
 show_modifier <- function(obj){
   cat(sprintf("Object of class %s with %d elements:\n",class(obj)[1],length(obj)))
