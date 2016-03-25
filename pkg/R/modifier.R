@@ -11,19 +11,6 @@ setRefClass("modifier"
     ) 
 )
 
-# get some methods, internal to validate. These should be exported, quietly.
-expr <- getFromNamespace("expr","validate")
-readlines_utf8 <- getFromNamespace("readlines_utf8","validate")
-parse_yrf_options <- getFromNamespace("parse_yrf_options","validate")
-options_from_yml <- getFromNamespace("options_from_yml","validate")
-ini_expressionset_cli <- getFromNamespace("ini_expressionset_cli","validate")
-ini_expressionset_yml <- getFromNamespace("ini_expressionset_yml","validate")
-show_expressionset <- getFromNamespace("show_expressionset","validate")
-call2text <- getFromNamespace("call2text","validate")
-get_exprs <- getFromNamespace("get_exprs","validate")
-PKGOPT <- getFromNamespace("PKGOPT","validate")
-
-#PKGOPT <- settings::options_manager(raise="none",lin.eq.eps = 1e-8, sequential=TRUE, na.condition=FALSE)
 
 show_modifier <- function(obj){
   cat(sprintf("Object of class %s with %d elements:\n",class(obj)[1],length(obj)))
@@ -60,9 +47,9 @@ modifier <- function(..., .file) new("modifier", ... , .file=.file)
 
 ini_modifier <- function(obj ,..., .file){
   if ( missing(.file) ){
-    ini_expressionset_cli(obj, ..., .prefix="M")
+    validate::.ini_expressionset_cli(obj, ..., .prefix="M")
   } else {
-    ini_expressionset_yml(obj, file=.file, .prefix="M")
+    validate::.ini_expressionset_yml(obj, file=.file, .prefix="M")
   }
   
   i <- sapply(expr(obj),is_modifying)
@@ -74,7 +61,7 @@ ini_modifier <- function(obj ,..., .file){
       ))
   }
   obj$rules <- obj$rules[i]
-  obj$._options <- PKGOPT
+  obj$._options <- validate::.PKGOPT
   obj
 }
 

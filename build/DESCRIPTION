@@ -8,8 +8,7 @@ LazyLoad: yes
 Authors@R: c(person("Mark", "van der Loo",role=c("cre","aut"),email="mark.vanderloo@gmail.com")
     , person("Edwin", "de Jonge", role="aut"))
 Description: Define and manage (conditional) data correction rules and apply them to
-    modify a data set. Modifications can be logged so the effect of each modification
-    can be monitored closely.
+    modify a data set. 
 Version: 0.0.1
 Depends: R (>= 3.2.0)
 URL: https://github.com/data-cleaning/validate.modify

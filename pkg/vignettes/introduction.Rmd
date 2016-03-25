@@ -53,6 +53,7 @@ m <- modifier(
 ```
 Next, the rules can be applied to our data.
 ```{r}
+data(validate::retailers)
 ret1 <- modify(retailers,m)
 ```
 
