@@ -60,7 +60,7 @@ ret1 <- modify(retailers,m)
 Alternatively, if you're a fan of the [magrittr](https://cran.r-project.org/package=magrittr), package you can do this
 ```{r,eval=FALSE}
 library(magrittr)
-ret2 <- retailers %>% modifier(m)
+ret2 <- retailers %>% modify(m)
 ```
 or even
 ```{r,eval=FALSE}
