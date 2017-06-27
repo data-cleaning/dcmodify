@@ -93,7 +93,7 @@ is_modifying <- function(cl){
 setGeneric("modify", function(dat, x, ...) standardGeneric("modify"))
 
 
-
+setGeneric("expr", function(x,...) standardGeneric("expr"))
 
 #### S4 IMPLEMENTATIONS
 setMethod("expr","modifier",function(x,...){

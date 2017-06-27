@@ -25,7 +25,7 @@
 #'    
 #' @docType package
 #' @name validate.modify
-#' @aliases package-validate.modify validate.modify
+#' @aliases package-dcmodify dcmodify
 #' @import methods
 #' @import yaml
 #' @import validate
