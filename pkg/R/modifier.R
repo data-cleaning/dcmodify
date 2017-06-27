@@ -62,6 +62,7 @@ ini_modifier <- function(obj ,..., .file){
   }
   obj$rules <- obj$rules[i]
   obj$._options <- validate::.PKGOPT
+  obj$._options(lin.eq.eps=0, lin.ineq.eps=0)
   obj
 }
 

@@ -9,7 +9,7 @@ Authors@R: c(person("Mark", "van der Loo",role=c("cre","aut"),email="mark.vander
     , person("Edwin", "de Jonge", role="aut"))
 Description: Define and manage (conditional) data correction rules and apply
     them to modify a data set.
-Version: 0.0.1
+Version: 0.1.0
 Depends: methods
 URL: https://github.com/data-cleaning/validate.modify
 BugReports: https://github.com/data-cleaning/validate.modify/issues
