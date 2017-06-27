@@ -1,14 +1,20 @@
 
 # travis config
 
+dist: trusty
 language: r
-sudo: false
-cache: packages
+sudo: required
+
+addons:
+  apt:
+    packages:
+      - libxml2-dev
+
+r:
+ - release
 
 before_install:
-  - R -e "install.packages(c('devtools','roxygen2','drat'))"
-  - R -e "drat::addRepo('data-cleaning')"
-  - R -e "devtools::install_deps('./pkg')"
+  - R -e "install.packages(c('validate','devtools','roxygen2','testthat','knitr'))"
   - R -e "devtools::document('./pkg')"
   - cd ./pkg
 
