@@ -60,7 +60,12 @@ setMethod("modify",c("data.frame","modifier"), function(dat, x, ...){
   odat <- if (sequential) NULL else dat
   na.condition <- opts("na.condition")
   
-  modifiers <- x$exprs(vectorize=FALSE,expand_assignments=TRUE)
+  modifiers <- x$exprs(vectorize=FALSE
+    , expand_assignments=TRUE
+# temp hack to prevent expansion of linear (in)equalities.
+# needs to be fixed when options are exported.
+    , lin_eq_eps=0
+    , lin_ineq_eps=0)
   for ( m in modifiers ){
     m <- set_guards(m)
     for (n in m){ # loop over nested conditionals
