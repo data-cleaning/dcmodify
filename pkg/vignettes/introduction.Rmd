@@ -2,7 +2,9 @@
 title: "Introduction to dcmodify"
 author: "Mark van der Loo and Edwin de Jonge"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
   %\VignetteIndexEntry{Introduction to dcmodify}
   %\VignetteEngine{knitr::rmarkdown}
@@ -11,7 +13,7 @@ vignette: >
 
 ### A first statement
 
-In the iris dataset, replace `Sepal.Width` with 4 value if it exceedsd 4.
+In the iris dataset, replace `Sepal.Width` with 4 value if it exceeds 4.
 ```{r,eval=FALSE}
 library(dcmodify)
 library(magrittr)
@@ -26,7 +28,7 @@ With this package, such 'data modifying rules' are taken out of the code and
 become in stead parameters to the work flow. This allows you to maintain, document
 and reason about data modification rules separately from the flow of your programme.
 
-This means you, the data munger can focus on the content and let R do the work.
+This means you, the expert, can focus on the content and let R do the work.
 
 
 ### Basic workflow
@@ -53,7 +55,6 @@ m <- modifier(
 ```
 Next, the rules can be applied to our data.
 ```{r}
-data(validate::retailers)
 ret1 <- modify(retailers,m)
 ```
 
@@ -114,8 +115,10 @@ rules. Since the package allows for logging of modifications the effect of each
 modifying rule can be monitored, and reverted if necessary.
 
 
+### Current limitations
 
-
+Conditional statements including `else` are not suported yet. Rules containing
+`if() else` are ignored with a warning.
 
 
 
