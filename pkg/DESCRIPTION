@@ -21,7 +21,8 @@ Imports:
     utils
 Suggests:
     testthat,
-    knitr
+    knitr,
+    lumberjack
 VignetteBuilder: knitr
 Collate:
     'guard.R'
