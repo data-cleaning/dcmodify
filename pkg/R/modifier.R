@@ -35,13 +35,17 @@ call2text <- function(cl){
 #' @param ... A comma-separated list of modification rules.
 #' @param .file A character vector of file locations.
 #'
-#' @return An
+#' @return An object of class \code{modifier}.
+#'
+#' @examples 
+#' m <- modifier( if (height < mean(height)) height <- 2*height
+#' , if ( weight > mean(weight) ) weight <- weight/2  )
+#' modify(women,m)
+#' 
+#' 
 #' @export
 modifier <- function(..., .file) new("modifier", ... , .file=.file)
 
-# Unfortunately we need to import this stuff directly from 'validate'
-# because cross-package inheritance don't work very well for reference
-# classes. Ref classes are needed because we want multiple dispatch.
 
 
 
@@ -88,7 +92,7 @@ is_modifying <- function(cl){
 #' Modify a data set
 #'
 #' @param dat An R object carrying data
-#' @param x An R object carrying modifications
+#' @param x An R object carrying modififying rules
 #' @param ... Options.
 #'
 #' @export

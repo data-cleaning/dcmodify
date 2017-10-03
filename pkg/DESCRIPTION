@@ -11,8 +11,8 @@ Description: Define and manage (conditional) data correction rules and apply
     them to modify a data set.
 Version: 0.1.0
 Depends: methods
-URL: https://github.com/data-cleaning/validate.modify
-BugReports: https://github.com/data-cleaning/validate.modify/issues
+URL: https://github.com/data-cleaning/dcmodify
+BugReports: https://github.com/data-cleaning/dcmodify/issues
 Date: 2016-07-15
 Imports:
     yaml,

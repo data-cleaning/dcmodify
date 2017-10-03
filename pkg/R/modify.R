@@ -7,7 +7,7 @@
 #' sets.
 #' 
 #' 
-#' The general workflow in \code{validate.modify} follows the following pattern.
+#' The general workflow in \code{dcmodify} follows the following pattern.
 #' \itemize{
 #'   \item Define or read a set of rules with \code{\link{modifier}}. 
 #'   \item \code{\link{modify}} data with the modification rules.
@@ -19,13 +19,13 @@
 #' investigate and maintain the rules themselves. Please have a look at the
 #' introductory vignette
 #'
-#' \code{vignette("intro",package="dcmodify")}
+#' \code{vignette("introduction",package="dcmodify")}
 #'
 #'
 #'    
 #' @docType package
-#' @name validate.modify
-#' @aliases package-dcmodify dcmodify
+#' @name dcmodify
+#' @aliases dcmodify-package dcmodify
 #' @import methods
 #' @import yaml
 #' @import validate
@@ -54,6 +54,10 @@ get_rule_guard <- function(r,dat, na.condition){
 }
 
 #' @rdname modify
+#' @examples 
+#' m <- modifier( if (height < mean(height)) height <- 2*height
+#' , if ( weight > mean(weight) ) weight <- weight/2  )
+#' modify(women,m)
 #' @export 
 setMethod("modify",c("data.frame","modifier"), function(dat, x, ...){
   opts <- settings::clone_and_merge(x$._options,...)
