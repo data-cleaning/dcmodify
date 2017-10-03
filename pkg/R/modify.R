@@ -19,7 +19,7 @@
 #' investigate and maintain the rules themselves. Please have a look at the
 #' introductory vignette
 #'
-#' \code{vignette("intro",package="validate.modify")}
+#' \code{vignette("intro",package="dcmodify")}
 #'
 #'
 #'    
@@ -30,6 +30,7 @@
 #' @import yaml
 #' @import validate
 #' @importFrom settings clone_and_merge
+#' @importFrom utils capture.output
 #' @export origin 
 #' @export description
 #' @export label

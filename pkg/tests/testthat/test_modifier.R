@@ -6,7 +6,6 @@ test_that("syntax check",{
   m <- expression(
     x <- 1
     , if ( x > 0) y <- 1
-    , if ( x > 0 ) y <- 1 else z <- 1
     , if( x > 0 ){
       x <- 0
     }
@@ -23,10 +22,13 @@ test_that("syntax check",{
       x <- NA
       print("hello")
     }
+    # for now, no 'else' is allowed.
+    , if (x > 0) x <- 10 else y <- 1
   )
   for ( e in m){
     expect_false(is_modifying(e))
   }
+  expect_warning(modifier( if (x > 0) y<- 1 else y<-2  ))
    
 })
 

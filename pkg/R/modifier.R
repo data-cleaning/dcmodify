@@ -25,7 +25,7 @@ show_modifier <- function(obj){
 }
 
 call2text <- function(cl){
-  gsub("\n","\n  ",as.character(cl))
+  capture.output(print(cl))
 }
 
 
@@ -71,8 +71,9 @@ is_modifying <- function(cl){
   # assignment or transient assignment (macro)
   if (deparse(cl[[1]]) %in% c("<-","=", ":=")) return(TRUE)
   
-  # if, or if-else statement
-  if ( cl[[1]] == "if" ) return(all(sapply(cl[-c(1,2)],is_modifying)))
+  # if statement. if-else currently not supported
+  if ( cl[[1]] == "if" & length(cl) < 4 ) 
+    return(all(sapply(cl[-c(1,2)],is_modifying)))
   
   # block
   if (cl[[1]]=="{") return(all(sapply(cl[-1],is_modifying)))
