@@ -7,13 +7,16 @@ Type: Package
 LazyLoad: yes
 Authors@R: c(person("Mark", "van der Loo",role=c("cre","aut"),email="mark.vanderloo@gmail.com")
     , person("Edwin", "de Jonge", role="aut"))
-Description: Define and manage (conditional) data correction rules and apply
-    them to modify a data set.
-Version: 0.1.0
+Description: Data cleaning scripts typically contain a lot of 'if this change that'
+    type of statements. Such statements are typically condensed expert knowledge.
+    With this package, such 'data modifying rules' are taken out of the code and
+    become in stead parameters to the work flow. This allows one to maintain, document,
+    and reason about data modification rules separately from the workflow.
+Version: 0.1.1
 Depends: methods
 URL: https://github.com/data-cleaning/dcmodify
 BugReports: https://github.com/data-cleaning/dcmodify/issues
-Date: 2016-07-15
+Date: 2017-10-06
 Imports:
     yaml,
     validate (>= 0.1.5),
