@@ -57,6 +57,7 @@ ini_modifier <- function(obj ,..., .file){
   }
   
   i <- sapply(expr(obj),is_modifying)
+  
   if ( !all(i) ){
     err <- paste(sprintf("\n[%03d] %s", which(!i), sapply(expr(obj)[!i], call2text )))
     warning(paste0(
@@ -64,9 +65,11 @@ ini_modifier <- function(obj ,..., .file){
       paste(err,collapse="") 
       ))
   }
-  obj$rules <- obj$rules[i]
-  obj$._options <- validate::.PKGOPT
-  obj$._options(lin.eq.eps=0, lin.ineq.eps=0)
+  if ( length(i) > 0 ){
+    obj$rules <- obj$rules[i]
+    obj$._options <- validate::.PKGOPT
+    obj$._options(lin.eq.eps=0, lin.ineq.eps=0)
+  }
   obj
 }
 

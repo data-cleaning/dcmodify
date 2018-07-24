@@ -44,7 +44,13 @@ test_that("macros work",{
   expect_equal(modify(dat,m),data.frame(y=c(9,0)))
 })
 
-#devtools::load_all('pkg')
+test_that("selection works",{
+  m <- modifier( if (x > 0) x <- 1)
+  # crash test
+  z <- m[1]
+  expect_equal(length(z), 1)
+})
+
 
 test_that("missing values are handled",{
   m <- modifier(if(x==0) x <- 1)
