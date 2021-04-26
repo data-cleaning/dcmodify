@@ -75,12 +75,9 @@ ini_modifier <- function(obj ,..., .file){
 
 # cl: a call.
 is_modifying <- function(cl){
-  # assignment or transient assignment (macro)
-
   
   if (is_assignment(cl)) return(TRUE)
   
-  #op <- as.character(cl[[1]])
   # if statement.
   if (is_if(cl)){
     return(all(sapply(cl[-c(1,2)],is_modifying)))
@@ -114,7 +111,11 @@ setMethod("expr","modifier",function(x,...){
   lapply(x$rules, function(r) r@expr)
 })
 
+#'@export 
+validate::as_yaml
 
+#'@export 
+validate::export_yaml
 
 
 

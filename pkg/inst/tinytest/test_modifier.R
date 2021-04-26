@@ -8,7 +8,11 @@ m <- expression(
   , if ( x > 0) y <- 1
   , if( x > 0 ){
     x <- 0
-  }
+  } # these are of course "just" assignments...
+  , y <- if (x > 0) 1
+  , y <- if (x > 0) {1}
+  , y <- ifelse(x > 0, 1, 2)
+  , y <- case_when(x > 0 ~ 1, TRUE ~ 2)
 )
 
 for ( e in m){
