@@ -13,6 +13,8 @@ m <- expression(
   , y <- if (x > 0) {1}
   , y <- ifelse(x > 0, 1, 2)
   , y <- case_when(x > 0 ~ 1, TRUE ~ 2)
+  , if (x > 0) x <- 10 else y <- 1
+  , if (x > 0) x <- 10 else if (x < -1) y <- 1 else z <- 2
 )
 
 for ( e in m){
@@ -26,13 +28,12 @@ m <- expression(
     x <- NA
     print("hello")
   }
-  # for now, no 'else' is allowed.
-  , if (x > 0) x <- 10 else y <- 1
+ 
 )
 for ( e in m){
   expect_false(dcmodify:::is_modifying(e))
 }
-expect_warning(modifier( if (x > 0) y<- 1 else y<-2  ))
+#expect_warning(modifier( if (x > 0) y<- 1 else y<-2  ))
    
 
 
