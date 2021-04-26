@@ -76,16 +76,21 @@ ini_modifier <- function(obj ,..., .file){
 # cl: a call.
 is_modifying <- function(cl){
   # assignment or transient assignment (macro)
-  if (deparse(cl[[1]]) %in% c("<-","=", ":=")) return(TRUE)
+
   
-  # if statement. if-else currently not supported
-  if ( cl[[1]] == "if" & length(cl) < 4 ) 
+  if (is_assignment(cl)) return(TRUE)
+  
+  #op <- as.character(cl[[1]])
+  # if statement.
+  if (is_if(cl)){
     return(all(sapply(cl[-c(1,2)],is_modifying)))
+  }
   
   # block
-  if (cl[[1]]=="{") return(all(sapply(cl[-1],is_modifying)))
-  
-  
+  if (is_block(cl)){
+    return(all(sapply(cl[-1],is_modifying)))
+  }
+
   FALSE
 }
 

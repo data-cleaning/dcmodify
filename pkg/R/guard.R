@@ -108,9 +108,10 @@ is_block <- function(e){
 }
 
 # unwrap single statements, should not affect real block assignments...
+# TODO also for "(" ?
 unwrap <- function(e){
-  if (is_block(e) && length(e) == 2){
-    return(e[[2]])
+  while(is_block(e) && length(e) == 2){
+    e <- e[[2]]
   }
   e
 }
