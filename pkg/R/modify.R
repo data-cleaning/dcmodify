@@ -1,6 +1,6 @@
 #' Data Modification By Modifying Rules
 #' 
-#' @section Introduction:
+#' @description
 #' Data often contain errors and missing data. Experts can often correct
 #' commonly occuring errors based on simple conditional rules. This package
 #' facilitates the expression, management, and application of such rules on data
