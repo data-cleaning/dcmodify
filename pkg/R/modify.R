@@ -71,7 +71,11 @@ setMethod("modify",c("data.frame","modifier"), function(dat, x, ...){
     m <- set_guards(m)
     for (n in m){ # loop over nested conditionals
       I <- if (sequential) get_rule_guard(n, dat,na.condition) else get_rule_guard(n,odat,na.condition)
-      if (any(I)) dat[I,] <- within(dat[I,,drop=FALSE], eval(n))
+      if (all(I)){
+        dat <- within(dat, eval(n))
+      } else {
+        if (any(I)) dat[I,] <- within(dat[I,,drop=FALSE], eval(n))
+      }
     }
   }
   

@@ -1,0 +1,4 @@
+0.1.5
+ - Added 'markdown' as Suggests, as requested by CRAN.
+0.1.1
+ - First release
