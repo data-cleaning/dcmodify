@@ -28,9 +28,7 @@ Suggests:
 VignetteBuilder: knitr
 Collate:
     'dplyr_verbs.R'
-    'dt_verbs.R'
     'guard.R'
     'modifier.R'
     'modify.R'
-    'switch.R'
 RoxygenNote: 7.1.1
