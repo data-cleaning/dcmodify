@@ -8,6 +8,7 @@ setRefClass("modifier"
     , methods = list(
       show = function() show_modifier(.self)
       , initialize = function(..., .file) ini_modifier(.self, ..., .file=.file)
+      , assignments = function() guarded_assignments(.self)
     ) 
 )
 
@@ -21,7 +22,28 @@ show_modifier <- function(obj){
   for ( i in seq_along(calls)){
     cat(sprintf("%s: %s\n  %s\n\n",nm[i],lb[i],gsub("\n","\n  ",as.character(calls[i]))  ))
   }
+}
+
+guarded_assignments <- function(obj, na.condition = FALSE){
   
+  expr <- obj$exprs(  vectorize=FALSE
+                   ,  expand_assignments=TRUE
+                   )
+  m <- list()
+  for (n in names(expr)){
+    guards <- set_guards(expr[[n]])
+    names(guards) <- n
+    m <- c(m, guards)
+  }
+  names(m) <- make.unique(names(m))
+  
+  # if (isTRUE(na.condition)){
+  #   for (n in names(m)){
+  #     attr(m[[n]], "guard") <- na_allowed(guard(m[[n]]))
+  #   }
+  # }
+
+  m
 }
 
 call2text <- function(cl){

@@ -15,6 +15,15 @@ not <- function(e){
   bquote(!.(e))
 }
 
+na_allowed <- function(e){
+  # straight forward but less efficient would be
+  #e_na <- bquote(.(e) | is.na(.(e)))
+  
+  e_na <- bquote((.i <- (.(e))) | is.na(.i))
+  attributes(e_na) <- attributes(e)
+  e_na
+}
+
 # get guard attribute
 guard <- function(x){
   attr(x,"guard")
@@ -34,7 +43,7 @@ guard <- function(x){
 # The elements of the list have a 'guard' attribute, which is a logical expression 
 # indicating under which condition a call should be evaluated.
 #
-set_guards <- function(x){
+set_guards <- function(x, dplyr_verbs = FALSE){
   expr <- x
   
   if ( is_block(expr) ){
@@ -68,10 +77,13 @@ set_guards <- function(x){
     value <- expr[[3]]
                   
     # rewrite case_when or ifelse into if statement...
-    if (is_case_when(value)){
-      value <- case_when_into_if(value)
-    } else if (is_ifelse(value)){
-      value <- ifelse_into_if(value)
+    # make this optional, 
+    if (isTRUE(dplyr_verbs)){
+      if (is_case_when(value)){
+        value <- case_when_into_if(value)
+      } else if (is_ifelse(value)){
+        value <- ifelse_into_if(value)
+      }
     }
 
     if (is_if(value)){
@@ -124,9 +136,6 @@ is_assignment <- function(e){
   is.call(e) && as.character(e[[1]]) %in% c("<-", "=", ":=")
 }
 
-is_case_when <- function(e){
-  is.call(e) && e[[1]] == "case_when"
-}
 
 is_ifelse <- function(e){
   is.call(e) && as.character(e[[1]]) %in% c("ifelse", "if_else")
@@ -143,29 +152,3 @@ ifelse_into_if <- function(e){
   bquote(if (.(cond)) .(e_true) else .(e_false))
 }
 
-case_when_into_if <- function(e){
-  if (!is_case_when(e)){
-    return(e)
-  }
-  fs <- e[-1]
-  
-  ifexpr <- Reduce(function(f1,f2){
-    cond <- f1[[2]]
-    value <- f1[[3]]
-    #print(list(f1=f1, f2=f2))
-    
-    if (is.null(f2)){
-      if (isTRUE(cond)){
-        value
-      } else {
-        bquote(if (.(cond)) .(value))
-      }
-    } else {
-      bquote(if (.(cond)) .(value) else {.(f2)})
-    }
-  }, fs
-  , right = T # build expression from right to left
-  , init = NULL # needed to check for "dangling else".
-  )
-  ifexpr
-}
