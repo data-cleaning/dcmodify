@@ -8,7 +8,7 @@ setRefClass("modifier"
     , methods = list(
       show = function() show_modifier(.self)
       , initialize = function(..., .file) ini_modifier(.self, ..., .file=.file)
-      , assignments = function() guarded_assignments(.self)
+      , assignments = function() guarded_assignments(.self, dplyr_verbs=FALSE)
     ) 
 )
 
@@ -24,14 +24,14 @@ show_modifier <- function(obj){
   }
 }
 
-guarded_assignments <- function(obj, na.condition = FALSE){
+guarded_assignments <- function(obj, dplyr_verbs = FALSE){
   
   expr <- obj$exprs(  vectorize=FALSE
                    ,  expand_assignments=TRUE
                    )
   m <- list()
   for (n in names(expr)){
-    guards <- set_guards(expr[[n]])
+    guards <- set_guards(expr[[n]], dplyr_verbs = dplyr_verbs)
     names(guards) <- n
     m <- c(m, guards)
   }
