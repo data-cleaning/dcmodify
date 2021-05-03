@@ -8,7 +8,13 @@ setRefClass("modifier"
     , methods = list(
       show = function() show_modifier(.self)
       , initialize = function(..., .file) ini_modifier(.self, ..., .file=.file)
-      , assignments = function() guarded_assignments(.self, dplyr_verbs=FALSE)
+      , assignments = 
+        function(flatten = TRUE, dplyr_verbs = FALSE){
+          guarded_assignments( .self
+                             , flatten = flatten
+                             , dplyr_verbs = dplyr_verbs
+                             )
+        }
     ) 
 )
 
@@ -24,7 +30,8 @@ show_modifier <- function(obj){
   }
 }
 
-guarded_assignments <- function(obj, dplyr_verbs = FALSE){
+# TODO add flatten argument
+guarded_assignments <- function(obj, flatten = TRUE, dplyr_verbs = FALSE){
   
   expr <- obj$exprs(  vectorize=FALSE
                    ,  expand_assignments=TRUE
@@ -32,17 +39,16 @@ guarded_assignments <- function(obj, dplyr_verbs = FALSE){
   m <- list()
   for (n in names(expr)){
     guards <- set_guards(expr[[n]], dplyr_verbs = dplyr_verbs)
-    names(guards) <- n
-    m <- c(m, guards)
+    # flat list of all assignments
+    if (isTRUE(flatten)){
+      names(guards) <- rep(n, length(guards))
+      m <- c(m, guards)
+    } else {
+    # nested list of assignment per expression
+      m[[n]] <- guards
+    }
   }
   names(m) <- make.unique(names(m))
-  
-  # if (isTRUE(na.condition)){
-  #   for (n in names(m)){
-  #     attr(m[[n]], "guard") <- na_allowed(guard(m[[n]]))
-  #   }
-  # }
-
   m
 }
 

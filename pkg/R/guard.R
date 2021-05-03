@@ -136,6 +136,10 @@ is_assignment <- function(e){
   is.call(e) && as.character(e[[1]]) %in% c("<-", "=", ":=")
 }
 
+is_extract <- function(e){
+  
+}
+
 
 is_ifelse <- function(e){
   is.call(e) && as.character(e[[1]]) %in% c("ifelse", "if_else")

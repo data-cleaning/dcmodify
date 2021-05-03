@@ -74,4 +74,23 @@ expect_equal(modify(dat,m,sequential=TRUE), data.frame(x=1,y=0))
 expect_equal(modify(dat,m,sequential=FALSE) , data.frame(x=1,y=1))
 
 
+## assignments
 
+m <- modifier(
+  if ( x == 0) x <- 1
+  ,if ( x > 0){
+    y <- 1
+    z <- 1
+  }
+)
+
+asgnmnts <- m$assignments()
+guard <- dcmodify:::guard
+expect_equal(asgnmnts[[1]], quote(x <- 1))
+expect_equal(asgnmnts[[2]], quote(y <- 1))
+expect_equal(asgnmnts[[3]], quote(z <- 1))
+expect_equal(guard(asgnmnts[[1]]), quote(x == 0))
+expect_equal(guard(asgnmnts[[2]]), quote(x > 0))
+expect_equal(guard(asgnmnts[[3]]), quote(x > 0))
+
+asgnmnts <- m$assignments(flatten=FALSE)
