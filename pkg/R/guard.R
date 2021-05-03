@@ -57,6 +57,9 @@ set_guards <- function(x, dplyr_verbs = FALSE){
   if(is_if(expr)){
     
     cond <- expr[[2]]
+    if (is.null(cond) || (is.logical(cond) && is.na(cond))){
+      stop("Invalid condition, no NULL or NA: '", deparse(expr), "'", call. = FALSE)
+    }
     v <- expr[[3]] # expression
     
     attr(v,'guard') <- guard(x) %&% cond
@@ -69,7 +72,9 @@ set_guards <- function(x, dplyr_verbs = FALSE){
       v <- c(v,w)
     }
     return(unlist(lapply(v,set_guards, dplyr_verbs=dplyr_verbs)))
-  } else if (is_assignment(expr)){
+  } 
+  
+  if (is_assignment(expr)){
     
     # remove "{" from single statements
     expr[[3]] <- unwrap(expr[[3]])

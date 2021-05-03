@@ -44,9 +44,12 @@ NULL
 
 get_rule_guard <- function(r,dat, na.condition){
   g <- guard(r)
+  if (is.null(g)){
+    return(rep(TRUE,nrow(dat)))
+  }
   I <- eval(g,dat)
   if ( is.null(I) ){ 
-    rep(TRUE,nrow(dat)) 
+    rep(FALSE,nrow(dat)) 
   } else {
     I[is.na(I)] <- na.condition
     I

@@ -84,3 +84,10 @@ expect_equivalent(L[[3]], quote(z <- 3))
 expect_equal(attr(L[[1]],"guard"), quote(x>1))
 expect_equal(attr(L[[2]],"guard"), quote(!x>1 & x < -1))
 
+expect_error(
+  dcmodify:::set_guards(quote(if (NULL) x <- 1))
+)
+
+expect_error(
+  dcmodify:::set_guards(quote(if (NA) x <- 1))
+)
