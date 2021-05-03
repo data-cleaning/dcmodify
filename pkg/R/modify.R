@@ -64,15 +64,10 @@ setMethod("modify",c("data.frame","modifier"), function(dat, x, ...){
   sequential <- opts("sequential")
   odat <- if (sequential) NULL else dat
   na.condition <- opts("na.condition")
-  
-  modifiers <- x$exprs(vectorize=FALSE
-    , expand_assignments=TRUE)
-  for ( m in modifiers ){
-    m <- set_guards(m)
-    for (n in m){ # loop over nested conditionals
-      I <- if (sequential) get_rule_guard(n, dat,na.condition) else get_rule_guard(n,odat,na.condition)
-      if (any(I)) dat[I,] <- within(dat[I,,drop=FALSE], eval(n))
-    }
+  asgnmts <- x$assignments() 
+  for (n in asgnmts){
+    I <- if (sequential) get_rule_guard(n, dat,na.condition) else get_rule_guard(n,odat,na.condition)
+    if (any(I)) dat[I,] <- within(dat[I,,drop=FALSE], eval(n))
   }
   
   dat

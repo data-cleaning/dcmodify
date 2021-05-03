@@ -51,7 +51,7 @@ set_guards <- function(x, dplyr_verbs = FALSE){
       attr(ex,'guard') <- guard(x)
       ex
     })
-    return(unlist(lapply(v,set_guards)))
+    return(unlist(lapply(v,set_guards, dplyr_verbs=dplyr_verbs)))
   }
   
   if(is_if(expr)){
@@ -68,7 +68,7 @@ set_guards <- function(x, dplyr_verbs = FALSE){
       attr(w,'guard') <- guard(x) %&% not(cond)
       v <- c(v,w)
     }
-    return(unlist(lapply(v,set_guards)))
+    return(unlist(lapply(v,set_guards, dplyr_verbs=dplyr_verbs)))
   } else if (is_assignment(expr)){
     
     # remove "{" from single statements
@@ -108,7 +108,7 @@ set_guards <- function(x, dplyr_verbs = FALSE){
                             )
         attr(v_else, "guard") <- guard(x) %&% not(ifexpr[[2]])
         v <- c(v, v_else)
-      return(unlist(lapply(v, set_guards)))
+      return(unlist(lapply(v, set_guards, dplyr_verbs=dplyr_verbs)))
       }
     }
   }
