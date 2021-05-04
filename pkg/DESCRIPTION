@@ -24,11 +24,13 @@ Imports:
 Suggests:
     tinytest,
     knitr,
-    lumberjack
+    lumberjack,
+    rmarkdown
 VignetteBuilder: knitr
 Collate:
     'dplyr_verbs.R'
     'guard.R'
     'modifier.R'
     'modify.R'
+    'validate.R'
 RoxygenNote: 7.1.1

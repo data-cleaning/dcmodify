@@ -139,12 +139,6 @@ setMethod("expr","modifier",function(x,...){
   lapply(x$rules, function(r) r@expr)
 })
 
-#'@export 
-validate::as_yaml
-
-#'@export 
-validate::export_yaml
-
 
 
 
