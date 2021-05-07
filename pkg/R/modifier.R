@@ -8,6 +8,13 @@ setRefClass("modifier"
     , methods = list(
       show = function() show_modifier(.self)
       , initialize = function(..., .file) ini_modifier(.self, ..., .file=.file)
+      , assignments = 
+        function(flatten = TRUE, dplyr_verbs = FALSE){
+          guarded_assignments( .self
+                             , flatten = flatten
+                             , dplyr_verbs = dplyr_verbs
+                             )
+        }
     ) 
 )
 
@@ -21,7 +28,28 @@ show_modifier <- function(obj){
   for ( i in seq_along(calls)){
     cat(sprintf("%s: %s\n  %s\n\n",nm[i],lb[i],gsub("\n","\n  ",as.character(calls[i]))  ))
   }
+}
+
+# TODO add flatten argument
+guarded_assignments <- function(obj, flatten = TRUE, dplyr_verbs = FALSE){
   
+  expr <- obj$exprs(  vectorize=FALSE
+                   ,  expand_assignments=TRUE
+                   )
+  m <- list()
+  for (n in names(expr)){
+    guards <- set_guards(expr[[n]], dplyr_verbs = dplyr_verbs)
+    # flat list of all assignments
+    if (isTRUE(flatten)){
+      names(guards) <- rep(n, length(guards))
+      m <- c(m, guards)
+    } else {
+    # nested list of assignment per expression
+      m[[n]] <- guards
+    }
+  }
+  names(m) <- make.unique(names(m))
+  m
 }
 
 call2text <- function(cl){
@@ -75,17 +103,19 @@ ini_modifier <- function(obj ,..., .file){
 
 # cl: a call.
 is_modifying <- function(cl){
-  # assignment or transient assignment (macro)
-  if (deparse(cl[[1]]) %in% c("<-","=", ":=")) return(TRUE)
   
-  # if statement. if-else currently not supported
-  if ( cl[[1]] == "if" & length(cl) < 4 ) 
+  if (is_assignment(cl)) return(TRUE)
+  
+  # if statement.
+  if (is_if(cl)){
     return(all(sapply(cl[-c(1,2)],is_modifying)))
+  }
   
   # block
-  if (cl[[1]]=="{") return(all(sapply(cl[-1],is_modifying)))
-  
-  
+  if (is_block(cl)){
+    return(all(sapply(cl[-1],is_modifying)))
+  }
+
   FALSE
 }
 
@@ -108,8 +138,6 @@ setGeneric("expr", function(x,...) standardGeneric("expr"))
 setMethod("expr","modifier",function(x,...){
   lapply(x$rules, function(r) r@expr)
 })
-
-
 
 
 
