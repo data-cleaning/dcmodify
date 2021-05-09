@@ -15,7 +15,7 @@ validate::`origin<-`
 validate::description
 
 #'@export
-validate::`description<-`
+validate::"description<-"
 
 #'@export
 validate::label
