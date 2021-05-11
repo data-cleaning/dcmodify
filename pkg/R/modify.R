@@ -93,7 +93,3 @@ setMethod("modify",c("data.frame","modifier"), function(dat, x, ...){
 modify_so <- function(dat, ...){
   modify(dat, modifier(...))
 }
-
-
-
-
