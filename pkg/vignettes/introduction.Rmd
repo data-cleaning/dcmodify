@@ -25,7 +25,7 @@ iris %<>% modify_so( if(Sepal.Width > 4 ) Sepal.Width <- 4 )
 Data cleaning work flows or scripts typically contain a lot of 'if this do that'
 type of statements. Such statements are typically condensed expert knowledge.
 With this package, such 'data modifying rules' are taken out of the code and
-become in stead parameters to the work flow. This allows you to maintain, document
+become instead parameters to the work flow. This allows you to maintain, document
 and reason about data modification rules separately from the flow of your programme.
 
 This means you, the expert, can focus on the content and let R do the work.
@@ -81,8 +81,37 @@ other.rev < 0
 in the first rule of `m` above evaluates to `NA` in the first record of the `retailers` dataset. Such cases are handled by treating it as if the condition evaluated to `FALSE`.
 
 
+### Exporting and importing rules from file
 
-### Importing and exporting rules from file
+Modifier rules can also be defined and stored outside of the R script through the use of YAML files. Defining a YAML file can be done by hand, or by exporting an existing modifier object via `export_yaml` or `as_yaml`. Exporting the modifier defined in the [Basic workflow] section would look as follows:
+```{r,eval=FALSE}
+export_yaml(m, "myrules.yaml")
+```
+This code will create a YAML file with the following content: 
+```
+rules:
+- expr: if (other.rev < 0) other.rev <- -1 * other.rev
+  name: M1
+  label: ''
+  description: ''
+  created: 2021-07-29 16:57:00
+  origin: command-line
+  meta: []
+- expr: if (is.na(staff.costs)) staff.costs <- mean(staff.costs)
+  name: M2
+  label: ''
+  description: ''
+  created: 2021-07-29 16:57:00
+  origin: command-line
+  meta: []
+```
+Out of all these keys only `rules:` and `expr:` are required, all others are optional. 
+
+Once a YAML file is created, `modifier` can read the modification rules from the file and store it as a modifier object. For this the `.file` argument is used:
+```{r,eval=FALSE}
+m <- modifier(.file = "myrules.yaml")
+```
+Using separate files for the storage of rules has the advantage that the same set of rules can be easily shared across many different scripts.
 
 
 ### Performance, and a glimpse under the hood.
@@ -97,25 +126,24 @@ In short, when you call `modify`, or `modify_so`, the following steps are perfor
 1. The rules are transformed to statements that can be executed in a vectorized manner by R.
 2. If any macros present, they are inserted into the statements
 3. For each assignment, the conditions under which they should be executed are collected.
-4. The conditions are evaluated and assignments are exectuted on a selection of the data.
+4. The conditions are evaluated and assignments are executed on a selection of the data.
 
 
 ### Difference with dplyr::mutate
 
-The functionality of this package in resembles `dplyr::mutate`, since it also 
+The functionality of this package resembles `dplyr::mutate`, since it also 
 allows one to specify data mutations on data frames (or other tabular data 
-objects). The dplyr package is especially usefull for interactive use, for use
-in programming through the 'underscored' functions such as `mutate_`.
+objects). The dplyr package is especially useful for interactive use and also for use in programming through 'underscored' functions such as `mutate_`.
 
 The `dcmodify` package has been developed with a production street in 
 mind where similar data sets are processed frequently. By taking the modifying 
 rules out of the software, R programmers can build an application that allows 
-users that are less knowledgable about programming to specify their modification
+users that are less knowledgeable about programming to specify their modification
 rules. 
 
 ### Logging changes
 
-It can be interesting to study the effect of a certan set of data modifying 
+It can be interesting to study the effect of a certain set of data modifying 
 rules. The [lumberjack package](https://CRAN.R-project.org/package=lumberjack) is
 capable of tracking changes in data.
 
@@ -138,7 +166,7 @@ read.csv("cellwise.csv") %>>% head()
 
 ### Current limitations
 
-Conditional statements including `else` are not suported yet. Rules containing
+Conditional statements including `else` are not supported yet. Rules containing
 `if() else` are ignored with a warning.
 
 
