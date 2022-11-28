@@ -114,6 +114,32 @@ m <- modifier(.file = "myrules.yaml")
 Using separate files for the storage of rules has the advantage that the same set of rules can be easily shared across many different scripts.
 
 
+### Options
+
+By default, most options are taken from `validate` options (see `validate::.PKGOPT()`).
+Options can be set by passing them as arguments to `modify`. For example, by setting `sequential` to `FALSE`,
+you specify that assignments should be independent from previous assignments:
+```{r,eval=FALSE}
+df <- data.frame(
+  a = 1:2,
+  b = 3:4
+)
+
+m <- modifier(if (a == 1 & b == 3) { a <- 10; b <- 30 })
+
+# Only a is modified.
+modify(df, m)
+
+# Both a and b are modified.
+modify(df, m, sequential = FALSE)
+```
+
+Available options include:
+
+* `sequential`
+* `na.condition`
+
+
 ### Performance, and a glimpse under the hood.
 
 You, the user can assume that the rules are evaluated record-by-record. In
@@ -124,7 +150,7 @@ R-loops are avoided as much as possible.
 In short, when you call `modify`, or `modify_so`, the following steps are performed.
 
 1. The rules are transformed to statements that can be executed in a vectorized manner by R.
-2. If any macros present, they are inserted into the statements
+2. If any macros present, they are inserted into the statements.
 3. For each assignment, the conditions under which they should be executed are collected.
 4. The conditions are evaluated and assignments are executed on a selection of the data.
 
@@ -168,10 +194,3 @@ read.csv("cellwise.csv") %>>% head()
 
 Conditional statements including `else` are not supported yet. Rules containing
 `if() else` are ignored with a warning.
-
-
-
-
-
-
-
