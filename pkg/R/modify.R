@@ -57,6 +57,9 @@ get_rule_guard <- function(r,dat, na.condition){
 }
 
 #' @rdname modify
+#' @param dat A \code{data.frame}
+#' @param x A \code{modifier} object containing modifying rules.
+#' @param ... Extra arguments.
 #' @examples 
 #' m <- modifier( if (height < mean(height)) height <- 2*height
 #' , if ( weight > mean(weight) ) weight <- weight/2  )
