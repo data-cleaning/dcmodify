@@ -7,7 +7,7 @@ setRefClass("modifier"
     , contains = "expressionset"
     , methods = list(
       show = function() show_modifier(.self)
-      , initialize = function(..., .file) ini_modifier(.self, ..., .file=.file)
+      , initialize = function(..., .file, .data) ini_modifier(.self, ..., .file=.file, .data=.data)
       , assignments = 
         function(flatten = TRUE, dplyr_verbs = FALSE){
           guarded_assignments( .self
@@ -61,7 +61,9 @@ call2text <- function(cl){
 #'
 #'
 #' @param ... A comma-separated list of modification rules.
-#' @param .file A character vector of file locations.
+#' @param .file (optional) A character vector of file locations.
+#' @param .data (optional) A \code{data.frame} with columns \code{"rule"},
+#'   \code{"name"}, and \code{"description"}
 #'
 #' @return An object of class \code{modifier}.
 #'
@@ -72,33 +74,49 @@ call2text <- function(cl){
 #' 
 #' 
 #' @export
-modifier <- function(..., .file) new("modifier", ... , .file=.file)
+modifier <- function(..., .file, .data) new("modifier", ... , .file=.file, .data=.data)
 
 
 
 
-ini_modifier <- function(obj ,..., .file){
-  if ( missing(.file) ){
+ini_modifier <- function(obj ,..., .file, .data){
+  if ( missing(.file) && missing(.data)){
     validate::.ini_expressionset_cli(obj, ..., .prefix="M")
-  } else {
-    validate::.ini_expressionset_yml(obj, file=.file, .prefix="M")
-  }
-  
-  i <- sapply(expr(obj),is_modifying)
-  
-  if ( !all(i) ){
-    err <- paste(sprintf("\n[%03d] %s", which(!i), sapply(expr(obj)[!i], call2text )))
-    warning(paste0(
-      "Invalid syntax detected. The following expressions have been ignored:",
-      paste(err,collapse="") 
+    i <- sapply(expr(obj),is_modifying)
+    
+    if ( !all(i) ){
+      err <- paste(sprintf("\n[%03d] %s", which(!i), sapply(expr(obj)[!i], call2text )))
+      warning(paste0(
+        "Invalid syntax detected. The following expressions have been ignored:",
+        paste(err,collapse="") 
       ))
+    }
+    if ( length(i) > 0 ){
+      obj$rules <- obj$rules[i]
+      obj$._options <- validate::.PKGOPT
+      obj$._options(lin.eq.eps=0, lin.ineq.eps=0)
+    }
+    obj
+  } else if (!missing(.file)) {
+    validate::.ini_expressionset_yml(obj, file=.file, .prefix="M")
+    i <- sapply(expr(obj),is_modifying)
+    
+    if ( !all(i) ){
+      err <- paste(sprintf("\n[%03d] %s", which(!i), sapply(expr(obj)[!i], call2text )))
+      warning(paste0(
+        "Invalid syntax detected. The following expressions have been ignored:",
+        paste(err,collapse="") 
+      ))
+    }
+    if ( length(i) > 0 ){
+      obj$rules <- obj$rules[i]
+      obj$._options <- validate::.PKGOPT
+      obj$._options(lin.eq.eps=0, lin.ineq.eps=0)
+    }
+    obj
+  }else if (!missing(.data)) {
+    validate::.ini_expressionset_df(obj, dat=.data, .prefix="M")
   }
-  if ( length(i) > 0 ){
-    obj$rules <- obj$rules[i]
-    obj$._options <- validate::.PKGOPT
-    obj$._options(lin.eq.eps=0, lin.ineq.eps=0)
-  }
-  obj
 }
 
 # cl: a call.
