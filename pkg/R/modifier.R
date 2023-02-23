@@ -82,41 +82,27 @@ modifier <- function(..., .file, .data) new("modifier", ... , .file=.file, .data
 ini_modifier <- function(obj ,..., .file, .data){
   if ( missing(.file) && missing(.data)){
     validate::.ini_expressionset_cli(obj, ..., .prefix="M")
-    i <- sapply(expr(obj),is_modifying)
-    
-    if ( !all(i) ){
-      err <- paste(sprintf("\n[%03d] %s", which(!i), sapply(expr(obj)[!i], call2text )))
-      warning(paste0(
-        "Invalid syntax detected. The following expressions have been ignored:",
-        paste(err,collapse="") 
-      ))
-    }
-    if ( length(i) > 0 ){
-      obj$rules <- obj$rules[i]
-      obj$._options <- validate::.PKGOPT
-      obj$._options(lin.eq.eps=0, lin.ineq.eps=0)
-    }
-    obj
   } else if (!missing(.file)) {
     validate::.ini_expressionset_yml(obj, file=.file, .prefix="M")
-    i <- sapply(expr(obj),is_modifying)
-    
-    if ( !all(i) ){
-      err <- paste(sprintf("\n[%03d] %s", which(!i), sapply(expr(obj)[!i], call2text )))
-      warning(paste0(
-        "Invalid syntax detected. The following expressions have been ignored:",
-        paste(err,collapse="") 
-      ))
-    }
-    if ( length(i) > 0 ){
-      obj$rules <- obj$rules[i]
-      obj$._options <- validate::.PKGOPT
-      obj$._options(lin.eq.eps=0, lin.ineq.eps=0)
-    }
-    obj
   }else if (!missing(.data)) {
-    validate::.ini_expressionset_df(obj, dat=.data, .prefix="M")
+    validate:::.ini_expressionset_df(obj, dat=.data, .prefix="M")
   }
+  
+  i <- sapply(expr(obj),is_modifying)
+  
+  if ( !all(i) ){
+    err <- paste(sprintf("\n[%03d] %s", which(!i), sapply(expr(obj)[!i], call2text )))
+    warning(paste0(
+      "Invalid syntax detected. The following expressions have been ignored:",
+      paste(err,collapse="") 
+    ))
+  }
+  if ( length(i) > 0 ){
+    obj$rules <- obj$rules[i]
+    obj$._options <- validate::.PKGOPT
+    obj$._options(lin.eq.eps=0, lin.ineq.eps=0)
+  }
+  obj
 }
 
 # cl: a call.

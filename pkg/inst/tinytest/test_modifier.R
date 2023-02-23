@@ -54,7 +54,7 @@ z <- m[1]
 expect_equal(length(z), 1)
 
 ## read rules from data frame works
-df <- data.frame(rule= "if(x==0) x<=1", name="", description = "")
+df <- data.frame(rule= "if(x==0)x<-1", name="", description = "")
 m <- modifier(.data = df)
 dat <- data.frame(x=0)
 mod_dat <- data.frame(x=1)
