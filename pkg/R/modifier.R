@@ -62,8 +62,11 @@ call2text <- function(cl){
 #'
 #' @param ... A comma-separated list of modification rules.
 #' @param .file (optional) A character vector of file locations.
-#' @param .data (optional) A \code{data.frame} with columns \code{"rule"},
-#'   \code{"name"}, and \code{"description"}
+#' @param .data (optional) A \code{data.frame} with at least a column \code{"rule"}
+#'        of type \code{character}. Optionally, the following columns of metadata
+#'        can be provided (all \code{character}, except \code{"created"} which 
+#'        should be \code{POSIXct}): \code{"name"}, 
+#'        \code{"label"}, \code{"description"}, \code{"origin"}, \code{"created"}.
 #'
 #' @return An object of class \code{modifier}.
 #'
