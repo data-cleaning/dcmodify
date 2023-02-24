@@ -113,6 +113,29 @@ m <- modifier(.file = "myrules.yaml")
 ```
 Using separate files for the storage of rules has the advantage that the same set of rules can be easily shared across many different scripts.
 
+### Exporting and importing rules as data frame
+
+Modifier rules can also be defined and stored inside the R script through the use of data frames. Defining a data frame can be done by hand, or by exporting an existing modifier object via `as.data.frame`. Exporting the modifier defined in the [Basic workflow] section would look as follows:
+```{r,eval=FALSE}
+df <- as.data.frame(m)
+```
+This code will create a data frame with the following columns: 
+```
+rule: "if (other.rev < 0) other.rev <- -1 * other.rev" "if (is.na(staff.costs)) staff.costs <- mean(staff.costs)"
+name: "M1" "M2"
+label:"" "" 
+description:"" "" 
+created: 2021-07-29 16:57:00 2021-07-29 16:57:00
+origin: "command-line" "command-line"
+meta: [] []
+```
+Out of all these columns only `rule` `name` and `description` are required, all others are optional. 
+
+Once a data frame is created, `modifier` can read the modification rules from the data frame and store it as a modifier object. For this the `.data` argument is used:
+```{r,eval=FALSE}
+m <- modifier(.data = df)
+```
+
 
 ### Performance, and a glimpse under the hood.
 
