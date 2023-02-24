@@ -5,8 +5,15 @@ Title: Modify Data Using Externally Defined Modification Rules
 LazyData: no
 Type: Package
 LazyLoad: yes
-Authors@R: c(person("Mark", "van der Loo",role=c("cre","aut"),email="mark.vanderloo@gmail.com")
-    , person("Edwin", "de Jonge", role="aut"))
+Authors@R: c(person("Mark", "van der Loo"
+                   , role   = c("cre","aut")
+                   , email  = "mark.vanderloo@gmail.com"
+                   , comment= c(ORCID="0000-0002-9807-4686"))
+           , person("Edwin", "de Jonge"
+                   , role = "aut"
+                   , comment=c(ORCID="0000-0002-6580-4718"))
+           , person("Sjabbo","Schaveling",  role = "ctb")
+           , person("Floris", "de Ruijter", role = "ctb") )
 Description: Data cleaning scripts typically contain a lot of 'if this change that'
     type of statements. Such statements are typically condensed expert knowledge.
     With this package, such 'data modifying rules' are taken out of the code and
@@ -33,4 +40,4 @@ Collate:
     'modifier.R'
     'modify.R'
     'validate.R'
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1

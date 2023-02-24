@@ -1,3 +1,8 @@
+0.2.0
+ - Improved documentation (thanks to Jordi van Dooren)
+ - 'modifier' now reads rules metadata from data frame
+ 
+
 0.1.9
  - Improved documentation (Thanks to GH user Bas)
  - Fix for NULL and NA in condition
