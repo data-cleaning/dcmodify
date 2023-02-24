@@ -1,6 +1,8 @@
 0.2.0
  - Improved documentation (thanks to Jordi van Dooren)
  - 'modifier' now reads rules metadata from data frame
+ - Fix: constructions with single values such as 
+   if (is.na(x)) x <- mean(x, na.rm=TRUE) now work correctly.
  
 
 0.1.9

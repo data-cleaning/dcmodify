@@ -19,7 +19,7 @@ m <- expression(
 
 for ( e in m){
   expect_true(dcmodify:::is_modifying(e))
-}  
+}
 
 m <- expression(
   x = 1
@@ -28,13 +28,13 @@ m <- expression(
     x <- NA
     print("hello")
   }
- 
+
 )
 for ( e in m){
   expect_false(dcmodify:::is_modifying(e))
 }
 #expect_warning(modifier( if (x > 0) y<- 1 else y<-2  ))
-   
+
 
 
 ## no-crash test
@@ -100,3 +100,19 @@ expect_equal(guard(asgnmnts[[2]]), quote(x > 0))
 expect_equal(guard(asgnmnts[[3]]), quote(x > 0))
 
 asgnmnts <- m$assignments(flatten=FALSE)
+
+
+## aggregates / assignments
+m <- modifier(if (is.na(turnover)){turnover <- mean(turnover, na.rm=TRUE)})
+d <- data.frame(turnover = c(NA, 1, 3))
+d_m <- modify(d, m)
+expect_equal(d_m$turnover[1], 2)
+
+m <- modifier(
+  if (is.na(turnover)){
+    turnover <- mean_by(turnover, by=nace, na.rm=TRUE)}
+  )
+d <- data.frame(turnover = c(1, NA, 3, 4, NA, 6), nace=c("A", "A", "A", "B", "B", "B"))
+d_m <- modify(d, m)
+expect_equal(d_m$turnover, c(1,2,3,4,5,6))
+
