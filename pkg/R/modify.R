@@ -56,6 +56,31 @@ get_rule_guard <- function(r,dat, na.condition){
   }
 }
 
+#TODO: Overzetten naar lumberjack.
+no_log <- R6::R6Class("no_log"
+                  , private = list(
+                    verbose = NULL
+                  )
+                  , public = list(
+                    label = NULL
+                    , initialize = function( verbose = TRUE){
+                      private$verbose <- verbose
+                    }
+                    , add = function(meta, input, output){
+                      # NOP! we don't store anything!
+                    }
+                    , dump = function(file=NULL,...){
+                      if (is.character(file) && private$verbose ){
+                        msgf("NO log dumped at %s", normalizePath(file))
+                      }
+                    }
+                    , logdata = function(){
+                      data.frame()
+                    }
+                  )
+)
+
+
 #' @rdname modify
 #'
 #' @param dat A \code{data.frame}
@@ -67,14 +92,19 @@ get_rule_guard <- function(r,dat, na.condition){
 #' m <- modifier( if (height < mean(height)) height <- 2*height
 #' , if ( weight > mean(weight) ) weight <- weight/2  )
 #' modify(women,m)
-#' @export
-setMethod("modify",c("data.frame","modifier"), function(dat, x, ...){
+#' @export 
+setMethod("modify",c("data.frame","modifier"), function(dat, x, logger=NULL, ...){
   opts <- settings::clone_and_merge(x$._options,...)
   sequential <- opts("sequential")
   odat <- if (sequential) NULL else dat
+  
+  logger <- if(is.null(logger)) no_log$new() else logger
+  
   na.condition <- opts("na.condition")
   asgnmts <- x$assignments()
   for (n in asgnmts){
+    pre.dat <- dat
+    
     I <- if (sequential) {
       get_rule_guard(n, dat,na.condition)
     } else {
@@ -85,6 +115,14 @@ setMethod("modify",c("data.frame","modifier"), function(dat, x, ...){
     } else {
       if (any(I)) dat[I,] <- within(dat, eval(n))[I,,drop=FALSE]
     }
+
+    meta     <- list(expr = n
+#                     , file = file # x$...? bestand waar de regels vandaan komen
+#                     , line = lines # regelnummers in file. 
+                    )
+
+    logger$add(meta, pre.dat, dat)
+    
   }
 
   dat

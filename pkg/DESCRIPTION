@@ -27,7 +27,8 @@ Imports:
     yaml,
     validate (>= 0.1.5),
     settings,
-    utils
+    utils,
+    R6
 Suggests:
     tinytest,
     knitr,
