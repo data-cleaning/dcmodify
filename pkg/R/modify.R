@@ -87,9 +87,10 @@ no_log <- R6Class("no_log"
 #' @param dat A \code{data.frame}
 #' @param x A \code{modifier} object containing modifying rules.
 #' @param ... Options
-#'
-#' @examples
-#'
+#' @param logger Optional. A \code{lumberjack}-compatible logger object.
+#' @param ... Extra arguments.
+#' 
+#' @examples 
 #' m <- modifier( if (height < mean(height)) height <- 2*height
 #' , if ( weight > mean(weight) ) weight <- weight/2  )
 #' modify(women,m)
