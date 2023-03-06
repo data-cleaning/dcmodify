@@ -31,7 +31,8 @@
 #' @import validate
 #' @importFrom settings clone_and_merge
 #' @importFrom utils capture.output
-#' @export origin
+#' @importFrom R6 R6Class
+#' @export origin 
 #' @export description
 #' @export label
 #' @export variables
@@ -57,7 +58,7 @@ get_rule_guard <- function(r,dat, na.condition){
 }
 
 #TODO: Overzetten naar lumberjack.
-no_log <- R6::R6Class("no_log"
+no_log <- R6Class("no_log"
                   , private = list(
                     verbose = NULL
                   )
