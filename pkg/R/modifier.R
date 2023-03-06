@@ -5,9 +5,16 @@
 #' @keywords internal
 setRefClass("modifier"
     , contains = "expressionset"
+    , fields = c(
+        "source"
+    )
     , methods = list(
       show = function() show_modifier(.self)
-      , initialize = function(..., .file, .data) ini_modifier(.self, ..., .file=.file, .data=.data)
+      , initialize = function(..., .file, .data){
+          obj <- ini_modifier(.self, ..., .file=.file, .data=.data)
+          obj$source <- if(!missing(.file)) .file else NA_character_
+          obj
+      }
       , assignments = 
         function(flatten = TRUE, dplyr_verbs = FALSE){
           guarded_assignments( .self

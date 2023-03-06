@@ -118,7 +118,7 @@ setMethod("modify",c("data.frame","modifier"), function(dat, x, logger=NULL, ...
     }
 
     meta     <- list(expr = n
-#                     , file = file # x$...? bestand waar de regels vandaan komen
+                     , file = x$source
 #                     , line = lines # regelnummers in file. 
                     )
 
