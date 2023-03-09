@@ -12,7 +12,7 @@ setRefClass("modifier"
       show = function() show_modifier(.self)
       , initialize = function(..., .file, .data){
           obj <- ini_modifier(.self, ..., .file=.file, .data=.data)
-          obj$source <- if(!missing(.file)) .file else NA_character_
+          obj$source <- if(!missing(.file)) .file else NULL
           obj
       }
       , assignments = 

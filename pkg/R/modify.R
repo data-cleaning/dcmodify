@@ -118,7 +118,8 @@ setMethod("modify",c("data.frame","modifier"), function(dat, x, logger=NULL, ...
       if (any(I)) dat[I,] <- within(dat, eval(n))[I,,drop=FALSE]
     }
 
-    meta     <- list(expr = n
+    meta     <- list(  expr = n
+                     , src = deparse(n)
                      , file = x$source
 #                     , line = lines # regelnummers in file. 
                     )
