@@ -1,4 +1,6 @@
-0.2.0
+0.8.0
+ - Now supports rule-wise logging of changes by integration with the
+   'lumberjack' package.
  - Improved documentation (thanks to Jordi van Dooren)
  - 'modifier' now reads rules metadata from data frame
  - Fix: constructions with single values such as 
