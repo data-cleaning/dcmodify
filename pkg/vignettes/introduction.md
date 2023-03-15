@@ -1,23 +1,27 @@
+<!--
+%\VignetteEngine{simplermarkdown::mdweave_to_html}
+%\VignetteIndexEntry{Introduction to dcmodify}
+-->
+
 ---
-title: "Introduction to dcmodify"
-author: "Mark van der Loo and Edwin de Jonge"
-date: "`r Sys.Date()`"
-output: 
-  rmarkdown::html_vignette:
-    toc: true
-vignette: >
-  %\VignetteIndexEntry{Introduction to dcmodify}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+title: Introduction to `dcmodify`
+author: Mark P.J. van der Loo and Edwin de Jonge
+css: "style.css"
 ---
+
+Package version `packageVersion("dcmodify")`{.R}.
+
+Please use `citation("dcmodify")` to cite the package.
+
+### Introduction
+
 
 ### A first statement
 
 In the iris dataset, replace `Sepal.Width` with 4 value if it exceeds 4.
-```{r,eval=FALSE}
+```{.R}
 library(dcmodify)
-library(magrittr)
-iris %<>% modify_so( if(Sepal.Width > 4 ) Sepal.Width <- 4 )
+iris1 <-  modify_so(iris, if(Sepal.Width > 4 ) Sepal.Width <- 4 )
 ```
 
 ### Why this package
@@ -40,13 +44,13 @@ The workflow of `dcmodify` is designed to take two concerns of your hands. The f
 - `modify`: This is a function that applies the rules in a modifier to your data.
 
 Here's an example using the `retailers` data set from the [validate](https://cran.r-project.org/package=validate) package. 
-```{r}
+```{.R}
 data("retailers", package="validate")
 head(retailers[-(1:2)],3)
 ```
 
 First we define a set of modifying rules, using `modifier`.
-```{r}
+```{.R}
 library(dcmodify)
 m <- modifier(
   if (other.rev < 0) other.rev <- -1 * other.rev
@@ -54,17 +58,17 @@ m <- modifier(
 )
 ```
 Next, the rules can be applied to our data.
-```{r}
+```{.R}
 ret1 <- modify(retailers,m)
 ```
 
 Alternatively, if you're a fan of the [magrittr](https://cran.r-project.org/package=magrittr), package you can do this
-```{r,eval=FALSE}
+```{.R,eval=FALSE}
 library(magrittr)
 ret2 <- retailers %>% modifier(m)
 ```
 or even
-```{r,eval=FALSE}
+```{.R,eval=FALSE}
 retailers %<>% modify_so(
   if ( other.rev < 0) other.rev <- -1 * other.rev
   , if ( is.na(staff.costs) ) staff.costs <- mean(staff.costs)
@@ -84,7 +88,7 @@ in the first rule of `m` above evaluates to `NA` in the first record of the `ret
 ### Exporting and importing rules from file
 
 Modifier rules can also be defined and stored outside of the R script through the use of YAML files. Defining a YAML file can be done by hand, or by exporting an existing modifier object via `export_yaml` or `as_yaml`. Exporting the modifier defined in the [Basic workflow] section would look as follows:
-```{r,eval=FALSE}
+```{.R,eval=FALSE}
 export_yaml(m, "myrules.yaml")
 ```
 This code will create a YAML file with the following content: 
@@ -108,7 +112,7 @@ rules:
 Out of all these keys only `rules:` and `expr:` are required, all others are optional. 
 
 Once a YAML file is created, `modifier` can read the modification rules from the file and store it as a modifier object. For this the `.file` argument is used:
-```{r,eval=FALSE}
+```{.R,eval=FALSE}
 m <- modifier(.file = "myrules.yaml")
 ```
 Using separate files for the storage of rules has the advantage that the same set of rules can be easily shared across many different scripts.
@@ -116,7 +120,7 @@ Using separate files for the storage of rules has the advantage that the same se
 ### Exporting and importing rules as data frame
 
 Modifier rules can also be defined and stored inside the R script through the use of data frames. Defining a data frame can be done by hand, or by exporting an existing modifier object via `as.data.frame`. Exporting the modifier defined in the [Basic workflow] section would look as follows:
-```{r,eval=FALSE}
+```{.R,eval=FALSE}
 df <- as.data.frame(m)
 ```
 This code will create a data frame with the following columns: 
@@ -132,7 +136,7 @@ meta: [] []
 Out of all these columns only `rule` `name` and `description` are required, all others are optional. 
 
 Once a data frame is created, `modifier` can read the modification rules from the data frame and store it as a modifier object. For this the `.data` argument is used:
-```{r,eval=FALSE}
+```{.R,eval=FALSE}
 m <- modifier(.data = df)
 ```
 
@@ -142,7 +146,7 @@ m <- modifier(.data = df)
 By default, most options are taken from `validate` options (see `validate::.PKGOPT()`).
 Options can be set by passing them as arguments to `modify`. For example, by setting `sequential` to `FALSE`,
 you specify that assignments should be independent from previous assignments:
-```{r,eval=FALSE}
+```{.R,eval=FALSE}
 df <- data.frame(
   a = 1:2,
   b = 3:4
@@ -198,7 +202,7 @@ capable of tracking changes in data.
 
 To start logging data you need to replace the magrittr pipe (`%>%`) with the 
 lumberjack operator `%>>%` and insert some logging commands into the pipeline.
-```{r,eval=TRUE}
+```{.R,eval=TRUE}
 library(lumberjack)
 # add primary key so cellwise changes can be traced
 women$id <- letters[1:15]

@@ -33,6 +33,10 @@ revdep: pkg
 	mv *.tar.gz revdep
 	R -s -e "out <- tools::check_packages_in_dir('revdep',reverse=list(which='most'),Ncpus=3); print(summary(out)); saveRDS(out, file='revdep/output.RDS')"
 
+vignette: 
+	mkdir -p out
+	cp pkg/vignettes/* ./out
+	cd out; R -e "simplermarkdown::mdweave_to_html('introduction.md')"
 
 clean:
 	rm -f pkg/vignettes/*.aux
