@@ -1,0 +1,12 @@
+# myrules.txt
+
+# unit of measure error
+if (abs(consumption) <= 1){
+  consumption <- 1000*consumption
+}
+
+# sign error
+if (consumption < 0 ){
+  consumption <- -1 * consumption
+}
+

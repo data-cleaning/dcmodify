@@ -30,11 +30,10 @@ Imports:
     utils,
     R6
 Suggests:
+    simplermarkdown,
     tinytest,
-    knitr,
-    lumberjack,
-    rmarkdown
-VignetteBuilder: knitr
+    lumberjack
+VignetteBuilder: simplermarkdown
 Collate:
     'dplyr_verbs.R'
     'guard.R'

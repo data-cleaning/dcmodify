@@ -3,6 +3,7 @@
  - 'modifier' now reads rules metadata from data frame
  - Fix: constructions with single values such as 
    if (is.na(x)) x <- mean(x, na.rm=TRUE) now work correctly.
+ - Vignette updated and now rendered with 'simplermarkdown'
  
 
 0.1.9
