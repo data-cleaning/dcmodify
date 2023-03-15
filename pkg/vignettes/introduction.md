@@ -9,215 +9,186 @@ author: Mark P.J. van der Loo and Edwin de Jonge
 css: "style.css"
 ---
 
+_Rule-based data processing for data cleaning._
+
 Package version `packageVersion("dcmodify")`{.R}.
 
 Please use `citation("dcmodify")` to cite the package.
 
-### Introduction
+## Introduction
+
+The `dcmodify` package allows users to declare (conditional) data
+processing steps without hard-coding them in an R script.
+
+![_Rule-based data processing_](modify.png "Rule-based data processing")
+
+The motivating use case is where domain experts need to frequently update (fix)
+values of a data set depending on data conditions. Such updates require (1)
+selecting the cases where the conditions apply, and (2) updating the values.
 
 
-### A first statement
+### Example
 
-In the iris dataset, replace `Sepal.Width` with 4 value if it exceeds 4.
+We create a dataset where we asked some imaginary respondents about their
+average water consumption per day.
+
+```{.R}
+water <- data.frame(
+   name        = c("Ross", "Robert", "Martin", "Brian", "Simon")
+ , consumption = c(110, 105, 0.15, 95, -100) 
+)
+water
+```
+
+Here, Martin submitted his water consumption in m^3^ while the others
+responded in liters. Such a unit of measure error can be
+detected  and fixed. Simon took the engineering approach, interpreted
+consumption as a _sink_, and put a negative sign in front of his
+answer. Again, this is a data error that can be detected and fixed
+easily.
+
+If such errors occur frequently, it makes sense to store the treatment.  In
+`dcmodify` this can be solved as follows.
+
 ```{.R}
 library(dcmodify)
-iris1 <-  modify_so(iris, if(Sepal.Width > 4 ) Sepal.Width <- 4 )
+# define a rule set (here with one rule)
+rules <- modifier(
+          if ( abs(consumption) <= 1 ) consumption <- 1000*consumption  
+        , if ( consumption < 0 ) consumption <- -1 * consumption )  
+
+# apply the ruleset to the data
+out <- modify(water, rules)
+out
 ```
+In the first step we define a set of conditional data modifying
+rules of the form:
+```
+if (some condition) change somthing
+```
+next, using `modifier()`, these rules are applied record-wise.
 
-### Why this package
+## What's the idea 
 
-Data cleaning work flows or scripts typically contain a lot of 'if this do that'
-type of statements. Such statements are typically condensed expert knowledge.
-With this package, such 'data modifying rules' are taken out of the code and
-become instead parameters to the work flow. This allows you to maintain, document
-and reason about data modification rules separately from the flow of your programme.
+In `dcmodify` conditional data modifying rules are first class citizens.
+Modifying rules can be created, deleted, read from or written to file,
+filtered, selected, and investigated. And of course, applied to data.
 
-This means you, the expert, can focus on the content and let R do the work.
-
-
-### Basic workflow
-
-The workflow of `dcmodify` is designed to take two concerns of your hands. The first concern is how to implement the many ideas and rules that define how and when to modify data. The second concern is related to how to apply such rules to your data. We therefore introduce two nouns and one verb that govern the basic workflow.
-
-- data: This is your data, currently this must be stored in a `data.frame`.
-- `modifier`: This is an object that stores (conditional) data modification rules.
-- `modify`: This is a function that applies the rules in a modifier to your data.
-
-Here's an example using the `retailers` data set from the [validate](https://cran.r-project.org/package=validate) package. 
+In particular, the `rules` object of the previous example is basically a list
+of class `modifier`.
 ```{.R}
-data("retailers", package="validate")
-head(retailers[-(1:2)],3)
+rules
 ```
 
-First we define a set of modifying rules, using `modifier`.
+For example, we may select one rule and apply it to our original data
+set.
 ```{.R}
-library(dcmodify)
-m <- modifier(
-  if (other.rev < 0) other.rev <- -1 * other.rev
-  , if ( is.na(staff.costs) ) staff.costs <- mean(staff.costs)
-)
+modify(water, rules[2])
 ```
-Next, the rules can be applied to our data.
+
+We can ask which variables are used in the modifying rules (here: only one).
 ```{.R}
-ret1 <- modify(retailers,m)
+variables(rules)
 ```
 
-Alternatively, if you're a fan of the [magrittr](https://cran.r-project.org/package=magrittr), package you can do this
-```{.R,eval=FALSE}
-library(magrittr)
-ret2 <- retailers %>% modifier(m)
+### Exercises
+
+1. Load the `retailers` dataset from the validate package
+   using `data("retailers", package="validate")`.
+2. Create a modifier that (1) sets `other.rev` to zero
+   if it is missing, (2) replaces negative `other.rev` with
+   the absolute value.
+
+
+## Import/export of rules and rule metadata
+
+The `dcmodify` package supports reading/writing rules from free text file,
+`yaml` files, or data frames. For example, consider the contents of the file
+`myrules.txt` (to try the following code, create such a file yourself).
+
 ```
-or even
-```{.R,eval=FALSE}
-retailers %<>% modify_so(
-  if ( other.rev < 0) other.rev <- -1 * other.rev
-  , if ( is.na(staff.costs) ) staff.costs <- mean(staff.costs)
+# myrules.txt
+
+# unit of measure error
+if (abs(consumption) <= 1){
+  consumption <- 1000*consumption
+}
+
+# sign error
+if (consumption < 0 ){
+  consumption <- -1 * consumption
+}
+```
+Reading the rules is done with the `.file` argument.
+
+```{.R}
+rules <- modifier(.file="myrules.txt")
+rules
+```
+
+A second way to store rules is in [yaml](https://yaml.org/) format. This allows
+one to add metadata to rules, including a name, label or description. To demonstrate
+this, we will write the rules to `yaml` file and print the file contents.
+```{.R}
+fn <- tempfile()
+# export rules to yaml format
+export_yaml(rules,file=fn)
+
+# print file contents
+readLines(fn) |> paste(collapse="\n") |> cat()
+```
+
+Finally, it is possible to read rules from (and export to) data frame.
+A rule data frame must at least contain a `character` column named `rule`;
+all other columns are considered metadata.
+```{.R}
+d <- data.frame(
+    name = c("U1","S1")
+  , label = c("Unit error", "sign error")
 )
-```
-Here, the `%<>%` operator makes sure that the original dataset gets overwritten, and `modify_so` is a shortcut function for defining modificaton rules in-line.
-
-### Handling missing values
-
-The rules you define in a `modifier` are executed on records where the conditions yields `TRUE`. In R this poses the problem on what to do when in a record the condition evaluates to `NA`. For example, the condition
-```
-other.rev < 0
-```
-in the first rule of `m` above evaluates to `NA` in the first record of the `retailers` dataset. Such cases are handled by treating it as if the condition evaluated to `FALSE`.
-
-
-### Exporting and importing rules from file
-
-Modifier rules can also be defined and stored outside of the R script through the use of YAML files. Defining a YAML file can be done by hand, or by exporting an existing modifier object via `export_yaml` or `as_yaml`. Exporting the modifier defined in the [Basic workflow] section would look as follows:
-```{.R,eval=FALSE}
-export_yaml(m, "myrules.yaml")
-```
-This code will create a YAML file with the following content: 
-```
-rules:
-- expr: if (other.rev < 0) other.rev <- -1 * other.rev
-  name: M1
-  label: ''
-  description: ''
-  created: 2021-07-29 16:57:00
-  origin: command-line
-  meta: []
-- expr: if (is.na(staff.costs)) staff.costs <- mean(staff.costs)
-  name: M2
-  label: ''
-  description: ''
-  created: 2021-07-29 16:57:00
-  origin: command-line
-  meta: []
-```
-Out of all these keys only `rules:` and `expr:` are required, all others are optional. 
-
-Once a YAML file is created, `modifier` can read the modification rules from the file and store it as a modifier object. For this the `.file` argument is used:
-```{.R,eval=FALSE}
-m <- modifier(.file = "myrules.yaml")
-```
-Using separate files for the storage of rules has the advantage that the same set of rules can be easily shared across many different scripts.
-
-### Exporting and importing rules as data frame
-
-Modifier rules can also be defined and stored inside the R script through the use of data frames. Defining a data frame can be done by hand, or by exporting an existing modifier object via `as.data.frame`. Exporting the modifier defined in the [Basic workflow] section would look as follows:
-```{.R,eval=FALSE}
-df <- as.data.frame(m)
-```
-This code will create a data frame with the following columns: 
-```
-rule: "if (other.rev < 0) other.rev <- -1 * other.rev" "if (is.na(staff.costs)) staff.costs <- mean(staff.costs)"
-name: "M1" "M2"
-label:"" "" 
-description:"" "" 
-created: 2021-07-29 16:57:00 2021-07-29 16:57:00
-origin: "command-line" "command-line"
-meta: [] []
-```
-Out of all these columns only `rule` `name` and `description` are required, all others are optional. 
-
-Once a data frame is created, `modifier` can read the modification rules from the data frame and store it as a modifier object. For this the `.data` argument is used:
-```{.R,eval=FALSE}
-m <- modifier(.data = df)
-```
-
-
-### Options
-
-By default, most options are taken from `validate` options (see `validate::.PKGOPT()`).
-Options can be set by passing them as arguments to `modify`. For example, by setting `sequential` to `FALSE`,
-you specify that assignments should be independent from previous assignments:
-```{.R,eval=FALSE}
-df <- data.frame(
-  a = 1:2,
-  b = 3:4
+d$rule <- c(
+   "if(abs(consumption)<=1) consuption <- 1000 * consumption"
+  ,"if(consumption < 0) consumption <- -1 * consumption"
 )
-
-m <- modifier(if (a == 1 & b == 3) { a <- 10; b <- 30 })
-
-# Only a is modified.
-modify(df, m)
-
-# Both a and b are modified.
-modify(df, m, sequential = FALSE)
+d
+```
+Reading from data frame is done with the `.data` argument.
+```{.R}
+myrules <- modifier(.data=d)
+myrules
 ```
 
-Available options include:
+### Exercise
 
-* `sequential`
-* `na.condition`
+Using the `retailers` dataset of the previous exercises, define
+a file with rules that
 
+- fill missing `other.rev` with zero (0)
+- detect large staff cost per staff ratios and reduces the staff costs accordingly
+  (unit of measure is 1000s of EUR, while some records are expressed in EUR).
+- Similar for total revenue and turnover.
 
-### Performance, and a glimpse under the hood.
-
-You, the user can assume that the rules are evaluated record-by-record. In
-reality, the package is smart enough to analyse the rules a little bit and to
-make sure they can be evaluated in a vectorized manner. This way explicit (and slow)
-R-loops are avoided as much as possible.
-
-In short, when you call `modify`, or `modify_so`, the following steps are performed.
-
-1. The rules are transformed to statements that can be executed in a vectorized manner by R.
-2. If any macros present, they are inserted into the statements.
-3. For each assignment, the conditions under which they should be executed are collected.
-4. The conditions are evaluated and assignments are executed on a selection of the data.
+See `?retailers` for the meaning of the variables.
 
 
-### Difference with dplyr::mutate
 
-The functionality of this package resembles `dplyr::mutate`, since it also 
-allows one to specify data mutations on data frames (or other tabular data 
-objects). The dplyr package is especially useful for interactive use and also for use in programming through 'underscored' functions such as `mutate_`.
+## Supported rules
 
-The `dcmodify` package has been developed with a production street in 
-mind where similar data sets are processed frequently. By taking the modifying 
-rules out of the software, R programmers can build an application that allows 
-users that are less knowledgeable about programming to specify their modification
-rules. 
+The package supports rules of the form
 
-### Logging changes
-
-It can be interesting to study the effect of a certain set of data modifying 
-rules. The [lumberjack package](https://CRAN.R-project.org/package=lumberjack) is
-capable of tracking changes in data.
-
-To start logging data you need to replace the magrittr pipe (`%>%`) with the 
-lumberjack operator `%>>%` and insert some logging commands into the pipeline.
-```{.R,eval=TRUE}
-library(lumberjack)
-# add primary key so cellwise changes can be traced
-women$id <- letters[1:15]
-
-out <- women %>>%
-  start_log( cellwise$new(key="id") ) %>>%
-  modify_so( if (height < mean(height)) height <- mean(height) ) %>>%
-  dump_log()
-
-# The log is written to file.
-read.csv("cellwise.csv") %>>% head()
 ```
+if (some condition holds){
+  change some existing values
+} else {
+  do something else with the data
+}
+```
+where the `else` clause is optional, and the rules are executed
+record-by-record. There may be multiple expressions in each `{}`
+block, and it is also allowed to have nested `if-else` statements.
 
 
-### Current limitations
 
-Conditional statements including `else` are not supported yet. Rules containing
-`if() else` are ignored with a warning.
+## Logging changes
+
+

@@ -29,7 +29,7 @@ Imports:
     settings,
     utils
 Suggests:
-    simplermarkdown
+    simplermarkdown,
     tinytest,
     lumberjack
 VignetteBuilder: simplermarkdown
