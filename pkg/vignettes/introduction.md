@@ -188,7 +188,49 @@ record-by-record. There may be multiple expressions in each `{}`
 block, and it is also allowed to have nested `if-else` statements.
 
 
+## Tracking changes
 
-## Logging changes
+`dcmodify` allows rule-by-rule change tracking via integration
+with the [lumberjack](https://cran.r-project.org/package=lumberjack) package[1].
+There are many ways of following what happens to a data file, and we refere
+to [1] for an overview of the possibilities of the `lumberjack` package.
+Here we demonstrate how to use the cellwise logger, which logs all
+changes cell-by-cell.
+
+```{.R}
+library(lumberjack)
+# create a logger (see ?cellwise)
+lgr <- cellwise$new(key="name")
+# create rules
+
+rules <- modifier(
+          if ( abs(consumption) <= 1 ) consumption <- 1000*consumption  
+        , if ( consumption < 0 ) consumption <- -1 * consumption )  
+
+# apply rules, and pass logger object to modify()
+out <- modify(water, rules, logger=lgr)
+
+# check what happened, by dumping the log and reading in 
+# the csv.
+logfile <- tempfile()
+lgr$dump(file=logfile)
+read.csv(logfile)
+
+```
+
+
+
+## References
+
+[1] van der Loo MPJ (2021). Monitoring Data in R with the lumberjack
+  Package. _Journal of Statistical Software_, **98**(1), 1--13.
+  [doi:10.18637/jss.v098.i01](https://doi.org/10.18637/jss.v098.i01).
+
+
+
+
+
+
+
 
 
