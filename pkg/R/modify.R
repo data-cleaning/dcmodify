@@ -58,7 +58,7 @@ get_rule_guard <- function(r,dat, na.condition){
 }
 
 #TODO: Overzetten naar lumberjack.
-no_log <- R6Class("no_log"
+no_log <- R6::R6Class("no_log"
                   , private = list(
                     verbose = NULL
                   )
