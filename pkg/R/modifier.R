@@ -95,7 +95,7 @@ ini_modifier <- function(obj ,..., .file, .data){
   } else if (!missing(.file)) {
     validate::.ini_expressionset_yml(obj, file=.file, .prefix="M")
   }else if (!missing(.data)) {
-    validate:::.ini_expressionset_df(obj, dat=.data, .prefix="M")
+    validate::.ini_expressionset_df(obj, dat=.data, .prefix="M")
   }
   
   i <- sapply(expr(obj),is_modifying)
@@ -139,7 +139,7 @@ is_modifying <- function(cl){
 #' Modify a data set
 #'
 #' @param dat An R object carrying data
-#' @param x An R object carrying modififying rules
+#' @param x An R object carrying modifying rules
 #' @param ... Options.
 #'
 #' @export
