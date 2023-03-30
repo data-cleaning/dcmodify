@@ -67,6 +67,18 @@ dat <- data.frame(x=NA)
 expect_equal(modify(dat, m), dat)
 expect_equal(modify(dat, m, na.condition=TRUE), data.frame(x=1))
 
+## if statement is handled
+m <- modifier(if(x==0) x <- 1)
+dat <- data.frame(x=c(NA,0,3))
+dat_result <- data.frame(x=c(NA,1,3))
+expect_equal(modify(dat, m), dat_result)
+
+## if else statement is handled
+m <- modifier(if(x==0) x <- 1 else x <- 2 )
+dat <- data.frame(x=c(NA,0,3))
+result <- modify(dat, m)
+expected_result <- data.frame(x=c(NA,1,2))
+expect_equal(result, expected_result)
 
 
 ## non/sequential execution is supported
