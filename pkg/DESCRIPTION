@@ -26,13 +26,12 @@ BugReports: https://github.com/data-cleaning/dcmodify/issues
 Imports:
     yaml,
     validate (>= 0.1.5),
+	lumberjack (>= 1.3.1),
     settings,
     utils,
-    R6
 Suggests:
     simplermarkdown,
     tinytest,
-    lumberjack
 VignetteBuilder: simplermarkdown
 Collate:
     'dplyr_verbs.R'
