@@ -35,7 +35,8 @@ for ( e in m){
 }
 #expect_warning(modifier( if (x > 0) y<- 1 else y<-2  ))
 
-
+expect_silent(m <- modifier(.file="rulefile.R"))
+expect_equal(length(m), 1)
 
 ## no-crash test
 capture.output(modifier(if(x>0)x<-1))

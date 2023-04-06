@@ -13,4 +13,15 @@ i4 <- dump_log(i3, file=logfile, stop=TRUE)
 expect_equal(nrow(read.csv(logfile)),2)
 
 
-## missing values are handled
+# Logging with rules coming from a file
+
+d <- data.frame(id=letters[1:3], x=c(0,NA,2))
+m <- modifier(.file="rulefile.R")
+logger <- cellwise$new(key="id")
+expect_silent(modify(d,m,logger=logger))
+logger$dump(file=logfile)
+
+
+
+
+
