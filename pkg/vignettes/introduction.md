@@ -179,9 +179,7 @@ The package supports rules of the form
 ```
 if (some condition holds){
   change some existing values
-} else {
-  do something else with the data
-}
+} 
 ```
 where the `else` clause is optional, and the rules are executed
 record-by-record. There may be multiple expressions in each `{}`
@@ -215,7 +213,6 @@ out <- modify(water, rules, logger=lgr)
 logfile <- tempfile()
 lgr$dump(file=logfile)
 read.csv(logfile)
-
 ```
 
 

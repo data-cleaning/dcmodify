@@ -1,11 +1,11 @@
 0.8.0
  - Now supports rule-wise logging of changes by integration with the
    'lumberjack' package.
- - Improved documentation (thanks to Jordi van Dooren)
- - 'modifier' now reads rules metadata from data frame
+ - 'modifier' now reads rules and metadata from data frame
  - Fix: constructions with single values such as 
    if (is.na(x)) x <- mean(x, na.rm=TRUE) now work correctly.
  - Vignette updated and now rendered with 'simplermarkdown'
+ - Improved documentation (thanks to Jordi van Dooren)
  
 
 0.1.9
