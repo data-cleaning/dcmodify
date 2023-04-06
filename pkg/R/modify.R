@@ -31,7 +31,7 @@
 #' @import validate
 #' @importFrom settings clone_and_merge
 #' @importFrom utils capture.output
-#' @importFrom R6 R6Class
+#' @importFrom lumberjack no_log
 #' @export origin 
 #' @export description
 #' @export label
@@ -56,30 +56,6 @@ get_rule_guard <- function(r,dat, na.condition){
     I
   }
 }
-
-#TODO: Overzetten naar lumberjack.
-no_log <- R6::R6Class("no_log"
-                  , private = list(
-                    verbose = NULL
-                  )
-                  , public = list(
-                    label = NULL
-                    , initialize = function( verbose = TRUE){
-                      private$verbose <- verbose
-                    }
-                    , add = function(meta, input, output){
-                      # NOP! we don't store anything!
-                    }
-                    , dump = function(file=NULL,...){
-                      if (is.character(file) && private$verbose ){
-                        msgf("NO log dumped at %s", normalizePath(file))
-                      }
-                    }
-                    , logdata = function(){
-                      data.frame()
-                    }
-                  )
-)
 
 
 #' @rdname modify

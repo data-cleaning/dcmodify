@@ -5,7 +5,7 @@ logfile <- tempfile()
 
 m = modifier(if(Sepal.Length<5.0) Sepal.Length <- 42, if(Petal.Width<0.3) Petal.Width <- 42)
 
-logger = simple$new(verbose=TRUE)
+logger = simple$new(verbose=FALSE)
 
 i2 <- start_log(iris, logger) 
 i3 <- modify(i2, m, logger=logger)     
