@@ -38,6 +38,8 @@ for ( e in m){
 expect_silent(m <- modifier(.file="rulefile.R"))
 expect_equal(length(m), 1)
 
+
+
 ## no-crash test
 capture.output(modifier(if(x>0)x<-1))
 

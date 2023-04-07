@@ -17,7 +17,12 @@ expect_equal(nrow(read.csv(logfile)),2)
 
 d <- data.frame(id=letters[1:3], x=c(0,NA,2))
 m <- modifier(.file="rulefile.R")
-logger <- cellwise$new(key="id")
+logger <- cellwise$new(key="id", verbose=FALSE)
+expect_silent(modify(d,m,logger=logger))
+logger$dump(file=logfile)
+
+m <- modifier(.data=data.frame(rule="if(is.na(x)) x<-0"))
+logger <- cellwise$new(key="id",verbose=FALSE)
 expect_silent(modify(d,m,logger=logger))
 logger$dump(file=logfile)
 
