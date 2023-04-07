@@ -38,10 +38,16 @@ for ( e in m){
 expect_silent(m <- modifier(.file="rulefile.R"))
 expect_equal(length(m), 1)
 
-
-
 ## no-crash test
-capture.output(modifier(if(x>0)x<-1))
+expect_silent(modifier(if(x>0)x<-1))
+
+## multiple assignments when first assignement changes condition
+m <- modifier(if (x>0){x <- -1; x<- 2*x})
+out <- modify(data.frame(x=1), m)
+expect_equal(out$x,-2)
+
+
+
 
 
 ## macros work
@@ -100,7 +106,7 @@ expect_equal(asgnmnts[[2]], quote(y <- 1))
 expect_equal(asgnmnts[[3]], quote(z <- 1))
 expect_equal(guard(asgnmnts[[1]]), quote(x == 0))
 expect_equal(guard(asgnmnts[[2]]), quote(x > 0))
-expect_equal(guard(asgnmnts[[3]]), quote(x > 0))
+expect_null(guard(asgnmnts[[3]]))
 
 asgnmnts <- m$assignments(flatten=FALSE)
 

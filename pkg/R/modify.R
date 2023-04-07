@@ -43,10 +43,13 @@ NULL
 NULL
 
 
-get_rule_guard <- function(r,dat, na.condition){
+get_rule_guard <- function(r, dat, na.condition, alt_guard=rep(TRUE,nrow(dat))){
   g <- guard(r)
+  # NULL is the case where the guard should be copied from
+  # alt_guard: this occurs when r comes after the first assignment in
+  # a block.
   if (is.null(g)){
-    return(rep(TRUE,nrow(dat)))
+    return(alt_guard)
   }
   I <- eval(g,dat)
   if ( is.null(I) ){
@@ -80,13 +83,16 @@ setMethod("modify",c("data.frame","modifier"), function(dat, x, logger=NULL, ...
   
   na.condition <- opts("na.condition")
   asgnmts <- x$assignments()
+  i <- 0
+  I <- rep(TRUE, nrow(dat))
   for (n in asgnmts){
-    pre.dat <- dat
+    i <- i+1
+    pre_dat <- dat
     
     I <- if (sequential) {
-      get_rule_guard(n, dat,na.condition)
+      get_rule_guard(n, dat, na.condition, alt_guard=I)
     } else {
-      get_rule_guard(n,odat,na.condition)
+      get_rule_guard(n,odat, na.condition, alt_guard=I)
     }
     if (all(I)){
       dat <- within(dat, eval(n))
@@ -95,12 +101,12 @@ setMethod("modify",c("data.frame","modifier"), function(dat, x, logger=NULL, ...
     }
 
     meta     <- list(  expr = n
-                     , src = deparse(n)
-                     , file = x$source
-#                     , line = lines # regelnummers in file. 
+                     , src = paste(deparse(n),collapse="\n")
+                     , file = "<modifier>"
+                     , line = c(i,i)
                     )
 
-    logger$add(meta, pre.dat, dat)
+    logger$add(meta, pre_dat, dat)
     
   }
 

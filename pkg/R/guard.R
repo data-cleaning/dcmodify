@@ -47,10 +47,12 @@ set_guards <- function(x, dplyr_verbs = FALSE){
   expr <- x
   
   if ( is_block(expr) ){
-    v <- lapply(expr[-1], function(ex){
-      attr(ex,'guard') <- guard(x)
-      ex
-    })
+    v <- lapply(expr[-1], identity)
+    attr(v[[1]],'guard') <- guard(x)
+#    v <- lapply(expr[-1], function(ex){
+#      attr(ex,'guard') <- guard(x)
+#      ex
+#    })
     return(unlist(lapply(v,set_guards, dplyr_verbs=dplyr_verbs)))
   }
   

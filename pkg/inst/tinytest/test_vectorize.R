@@ -35,7 +35,7 @@ expect_equal(length(L),2)
 expect_equivalent(L[[1]], quote(x <- 2))
 expect_equivalent(L[[2]], quote(y <- 3))
 expect_equal(attr(L[[1]],"guard"), quote(x>0))
-expect_equal(attr(L[[2]],"guard"), quote(x>0))
+expect_null(attr(L[[2]],"guard"))
 
 L <- dcmodify:::set_guards(quote(
   if ( x > 0 ){

@@ -4,9 +4,13 @@
  - 'modifier' now reads rules and metadata from data frame
  - Fix: constructions with single values such as 
    if (is.na(x)) x <- mean(x, na.rm=TRUE) now work correctly.
+ - Fix: in blocks following a condition, such as 
+   if (x < 0){ x <- 10; y <- 1}, the expression y <- 1 would not
+   be executed because the first expression in the block modifies
+   the value of the condition. [i.e.: if(c){a;b} is NOT equal to
+   if(c){a}; if(c){b}.]
  - Vignette updated and now rendered with 'simplermarkdown'
  - Improved documentation (thanks to Jordi van Dooren)
- 
 
 0.1.9
  - Improved documentation (Thanks to GH user Bas)
