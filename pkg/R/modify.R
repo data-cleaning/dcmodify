@@ -73,8 +73,32 @@ get_rule_guard <- function(r, dat, na.condition, alt_guard=rep(TRUE,nrow(dat))){
 #' m <- modifier( if (height < mean(height)) height <- 2*height
 #' , if ( weight > mean(weight) ) weight <- weight/2  )
 #' modify(women,m)
-#' @export 
-setMethod("modify",c("data.frame","modifier"), function(dat, x, logger=NULL, ...){
+#' @export
+setMethod("modify",signature("data.frame","modifier","environment"), function(dat, x, ref, logger=NULL, ...){
+  data_env <- namecheck(list2env(dat,parent=ref))
+  data_env$. <- dat
+  modify_work(x, data_env, logger,...)
+})
+
+#' @rdname modify
+setMethod("modify",signature("data.frame","modifier","data.frame"),function(dat, x,ref, logger=NULL,...){
+  env <- new.env()
+  env$ref <- ref
+  data_env <- namecheck(list2env(dat, parent=env))
+  data_env$. <- dat
+  modify_work(x, data_env, logger, ...)
+})
+
+#' @rdname modify
+setMethod("modify",signature("data.frame","modifier","list"),function(dat, x, ref, logger=NULL,...){
+  env <- list2env(ref)  
+  data_env <- namecheck(list2env(dat,parent=env))
+  data_env$. <- dat
+  modify_work(x, data_env, logger,...)  
+})
+
+
+setMethod("modify_work",c("data.frame","modifier"), function(dat, x, logger=NULL, ...){
   opts <- settings::clone_and_merge(x$._options,...)
   sequential <- opts("sequential")
   odat <- if (sequential) NULL else dat
