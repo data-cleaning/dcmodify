@@ -60,11 +60,24 @@ get_rule_guard <- function(r, dat, na.condition, alt_guard=rep(TRUE,nrow(dat))){
   }
 }
 
+namecheck <- function(x){
+  n1 <- ls(x)
+  n2 <- ls(parent.env(x))
+  i <- n1 %in% n2
+  if (any(i)){
+    n <- paste(paste0("'",n1[i],"'"),collapse=", ") 
+    w <- sprintf("Possible reference ambiguity: both current data set and reference data have variables named %s.",n)
+    warning(w)
+  }
+  x
+}
+
 
 #' @rdname modify
 #'
 #' @param dat A \code{data.frame}
 #' @param x A \code{modifier} object containing modifying rules.
+#' @param ref A \code{environment}
 #' @param ... Options
 #' @param logger Optional. A \code{lumberjack}-compatible logger object.
 #' @param ... Extra arguments.
@@ -77,7 +90,15 @@ get_rule_guard <- function(r, dat, na.condition, alt_guard=rep(TRUE,nrow(dat))){
 setMethod("modify",signature("data.frame","modifier","environment"), function(dat, x, ref, logger=NULL, ...){
   data_env <- namecheck(list2env(dat,parent=ref))
   data_env$. <- dat
-  modify_work(x, data_env, logger,...)
+  modify_work(data_env, x, logger,...)
+})
+
+#' @rdname modify
+setMethod("modify",signature("data.frame","modifier"), function(dat, x, logger=NULL, ...){
+  env <- new.env()
+  data_env <- namecheck(list2env(dat, parent=env))
+  data_env$. <- dat
+  modify_work(dat_env, x, logger,...)
 })
 
 #' @rdname modify
@@ -86,7 +107,7 @@ setMethod("modify",signature("data.frame","modifier","data.frame"),function(dat,
   env$ref <- ref
   data_env <- namecheck(list2env(dat, parent=env))
   data_env$. <- dat
-  modify_work(x, data_env, logger, ...)
+  modify_work(data_env, x, logger, ...)
 })
 
 #' @rdname modify
@@ -94,34 +115,34 @@ setMethod("modify",signature("data.frame","modifier","list"),function(dat, x, re
   env <- list2env(ref)  
   data_env <- namecheck(list2env(dat,parent=env))
   data_env$. <- dat
-  modify_work(x, data_env, logger,...)  
+  modify_work(data_env, x, logger,...)  
 })
 
 
-setMethod("modify_work",c("data.frame","modifier"), function(dat, x, logger=NULL, ...){
+modify_work <- function(dat, x, logger=NULL, ...){
   opts <- settings::clone_and_merge(x$._options,...)
   sequential <- opts("sequential")
-  odat <- if (sequential) NULL else dat
-  
+  frame <- dat$.
+  odat <- if (sequential) NULL else frame
   logger <- if(is.null(logger)) no_log$new() else logger
   
   na.condition <- opts("na.condition")
   asgnmts <- x$assignments()
   i <- 0
-  I <- rep(TRUE, nrow(dat))
+  I <- rep(TRUE, nrow(frame))
   for (n in asgnmts){
     i <- i+1
-    pre_dat <- dat
+    pre_dat <- frame
     
     I <- if (sequential) {
-      get_rule_guard(n, dat, na.condition, alt_guard=I)
+      get_rule_guard(n, frame, na.condition, alt_guard=I)
     } else {
       get_rule_guard(n,odat, na.condition, alt_guard=I)
     }
     if (all(I)){
-      dat <- within(dat, eval(n))
+      frame <- within(frame, eval(n))
     } else {
-      if (any(I)) dat[I,] <- within(dat, eval(n))[I,,drop=FALSE]
+      if (any(I)) frame[I,] <- within(frame, eval(n))[I,,drop=FALSE]
     }
 
     meta     <- list(  expr = n
@@ -130,12 +151,12 @@ setMethod("modify_work",c("data.frame","modifier"), function(dat, x, logger=NULL
                      , line = c(i,i)
                     )
 
-    logger$add(meta, pre_dat, dat)
+    logger$add(meta, pre_dat, frame)
     
   }
 
-  dat
-})
+  frame
+}
 
 #' Shortcut to modify data
 #'

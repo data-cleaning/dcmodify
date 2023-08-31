@@ -53,9 +53,9 @@ dat <- data.frame(y=c(9,11))
 expect_equal(modify(dat,m),data.frame(y=c(9,0)))
 
 ## modify with reference data ----
-v1 <- modifier(height > 0, weight / height > 0, height == ref$height)
-cf1 <- modify(women,v1,ref = women)
-v2 <- modifier(height > 0, weight / height > 0, height == w1$height)
+v1 <- modifier(if (x>0){x <- -1/ref$height})
+cf1 <- modify(data.frame(x=1),v1,ref = women)
+v2 <- modifier(if (x>0){x <- -1/w1$height})
 cf2 <- modify(women,v2,ref=list(w1=women))
 e <- new.env()
 e$w1 <- women
