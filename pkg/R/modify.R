@@ -43,7 +43,7 @@ NULL
 NULL
 
 
-get_rule_guard <- function(r, dat, na.condition, alt_guard=rep(TRUE,nrow(dat))){
+get_rule_guard <- function(r, dat, na.condition, ref, alt_guard=rep(TRUE,nrow(dat))){
   g <- guard(r)
   # NULL is the case where the guard should be copied from
   # alt_guard: this occurs when r comes after the first assignment in
@@ -51,7 +51,7 @@ get_rule_guard <- function(r, dat, na.condition, alt_guard=rep(TRUE,nrow(dat))){
   if (is.null(g)){
     return(alt_guard)
   }
-  I <- eval(g,dat)
+  I <- eval(g,dat, enclos = ref)
   if ( is.null(I) ){
     rep(FALSE,nrow(dat))
   } else {
@@ -132,17 +132,18 @@ modify_work <- function(dat, x, logger=NULL, ...){
   I <- rep(TRUE, nrow(frame))
   for (n in asgnmts){
     i <- i+1
+    dat$n <- n
     pre_dat <- frame
     
     I <- if (sequential) {
-      get_rule_guard(n, frame, na.condition, alt_guard=I)
+      get_rule_guard(n, frame, na.condition,ref = dat , alt_guard=I)
     } else {
-      get_rule_guard(n,odat, na.condition, alt_guard=I)
+      get_rule_guard(n,odat, na.condition, ref =dat, alt_guard=I)
     }
     if (all(I)){
-      frame <- within(frame, eval(n))
+      frame <- within_env(frame, eval(n), dat)
     } else {
-      if (any(I)) frame[I,] <- within(frame, eval(n))[I,,drop=FALSE]
+      if (any(I)) frame[I,] <- within_env(frame, eval(n), dat)[I,,drop=FALSE]
     }
 
     meta     <- list(  expr = n
@@ -167,3 +168,18 @@ modify_work <- function(dat, x, logger=NULL, ...){
 modify_so <- function(dat, ...){
   modify(dat, modifier(...))
 }
+
+within_env <- function (data, expr, enclos, ...) 
+{
+  parent <- enclos
+  e <- evalq(environment(), data, parent)
+  eval(substitute(expr), e)
+  l <- as.list(e, all.names = TRUE)
+  l <- l[!vapply(l, is.null, NA, USE.NAMES = FALSE)]
+  nl <- names(l)
+  del <- setdiff(names(data), nl)
+  data[nl] <- l
+  data[del] <- NULL
+  data
+}
+
