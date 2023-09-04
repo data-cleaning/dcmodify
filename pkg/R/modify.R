@@ -95,10 +95,9 @@ setMethod("modify",signature("data.frame","modifier","environment"), function(da
 
 #' @rdname modify
 setMethod("modify",signature("data.frame","modifier"), function(dat, x, logger=NULL, ...){
-  env <- new.env()
-  data_env <- namecheck(list2env(dat, parent=env))
+  data_env <- list2env(dat)
   data_env$. <- dat
-  modify_work(dat_env, x, logger,...)
+  modify_work(data_env, x, logger,...)
 })
 
 #' @rdname modify
