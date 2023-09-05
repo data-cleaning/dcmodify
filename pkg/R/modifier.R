@@ -140,10 +140,11 @@ is_modifying <- function(cl){
 #'
 #' @param dat An R object carrying data
 #' @param x An R object carrying modifying rules
+#' @param ref an environment
 #' @param ... Options.
 #'
 #' @export
-setGeneric("modify", function(dat, x, ...) standardGeneric("modify"))
+setGeneric("modify", function(dat, x, ref,...) standardGeneric("modify"))
 
 
 setGeneric("expr", function(x,...) standardGeneric("expr"))

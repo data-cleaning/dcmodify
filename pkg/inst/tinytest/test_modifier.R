@@ -47,14 +47,21 @@ out <- modify(data.frame(x=1), m)
 expect_equal(out$x,-2)
 
 
-
-
-
 ## macros work
 m <- modifier(lim := 10, if (y > lim) y <- 0)
 dat <- data.frame(y=c(9,11))
 expect_equal(modify(dat,m),data.frame(y=c(9,0)))
 
+## modify with reference data ----
+v1 <- modifier(if (x>0){x <- -1/ref$height})
+cf1 <- modify(data.frame(x=1),v1,ref = women)
+v2 <- modifier(if (x > 0){x <- -1/w1$height})
+cf2 <- modify(data.frame(x=1),v2,ref=list(w1=women))
+e <- new.env()
+e$w1 <- women
+cf3 <- modify(data.frame(x=1), v2, ref=e)
+expect_equal(summary(cf1)[1:7],summary(cf2)[1:7])
+expect_equal(summary(cf2)[1:7],summary(cf3)[1:7])
 
 ## selection works
 m <- modifier( if (x > 0) x <- 1)
@@ -68,6 +75,7 @@ m <- modifier(.data = df)
 dat <- data.frame(x=0)
 mod_dat <- data.frame(x=1)
 expect_equal(modify(dat, m), mod_dat)
+
 
 
 ## missing values are handled
