@@ -57,11 +57,16 @@ v1 <- modifier(if (x>0){x <- -1/ref$height})
 cf1 <- modify(data.frame(x=1),v1,ref = women)
 v2 <- modifier(if (x > 0){x <- -1/w1$height})
 cf2 <- modify(data.frame(x=1),v2,ref=list(w1=women))
+v4 <- modifier(if (x > 0){x <- -1/w1$height})
+cf4 <- modify(data.frame(x=1),v2,ref=list(w1=women))
 e <- new.env()
 e$w1 <- women
 cf3 <- modify(data.frame(x=1), v2, ref=e)
+v4 <- modifier(if (x>0 & ref$height != 0){x <- -1/ref$height})
+cf4 <- modify(data.frame(x=1),v1,ref = women)
 expect_equal(summary(cf1)[1:7],summary(cf2)[1:7])
 expect_equal(summary(cf2)[1:7],summary(cf3)[1:7])
+expect_equal(summary(cf3)[1:7],summary(cf4)[1:7])
 
 ## selection works
 m <- modifier( if (x > 0) x <- 1)

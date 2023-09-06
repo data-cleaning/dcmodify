@@ -1,3 +1,7 @@
+0.9.0
+ - Now supports reference data in rules, specified by de flag ref in 
+   the modify function. 
+
 0.8.0
  - Now supports rule-wise logging of changes by integration with the
    'lumberjack' package.
