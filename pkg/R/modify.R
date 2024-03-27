@@ -23,7 +23,6 @@
 #'
 #'
 #'
-#' @docType package
 #' @name dcmodify
 #' @aliases dcmodify-package dcmodify
 #' @import methods
@@ -36,7 +35,7 @@
 #' @export description
 #' @export label
 #' @export variables
-NULL
+"_PACKAGE"
 
 
 #' @include modifier.R
