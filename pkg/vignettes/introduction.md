@@ -171,6 +171,35 @@ a file with rules that
 See `?retailers` for the meaning of the variables.
 
 
+## Using reference data
+
+It is possible to use data not in the treated dataset in your data modification rules.
+This so-called reference data needs to be added in the call to `modify()`.
+```{.R}
+dat <- data.frame(x=seq_len(nrow(women)))
+m   <- modifier(if (x > 2) x <- ref$height/2)
+out <- modify(dat, m, ref=women)
+head(out)
+```
+Note that in this form, it is necessary to use `ref$` to refer to the `women` dataset in the context
+of modifying rules. This can be customized by passing the reference data as a named list or environment.
+```{.R}
+m   <- modifier(if (x > 2) x <- women$height/2)
+out <- modify(dat, m, ref=list(women=women))
+head(out,3)
+```
+Or, equivalently
+```{.R}
+e <- new.env()
+e$women <- women
+m   <- modifier(if (x > 2) x <- women$height/2)
+out <- modify(dat, m, ref=e)
+head(out,3)
+```
+
+
+
+
 
 ## Supported rules
 

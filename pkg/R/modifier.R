@@ -140,7 +140,7 @@ is_modifying <- function(cl){
 #'
 #' @param dat An R object carrying data
 #' @param x An R object carrying modifying rules
-#' @param ref an environment
+#' @param ref Reference data, either a data.frame, an environment or a list.
 #' @param ... Options.
 #'
 #' @export
